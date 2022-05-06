@@ -1,0 +1,26 @@
+{
+  "name": "vir1-deploy",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thynkon/VIR1-Deploy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thynkon/VIR1-Deploy/issues"
+  },
+  "homepage": "https://github.com/Thynkon/VIR1-Deploy#readme",
+  "private": true,
+  "devDependencies": {
+    "jest": "^28.1.0"
+  }
+}
