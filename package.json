@@ -2,9 +2,6 @@
   "name": "vir1-deploy",
   "version": "1.0.0",
   "description": "",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "jest"
   },
