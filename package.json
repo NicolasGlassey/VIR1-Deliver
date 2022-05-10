@@ -22,5 +22,8 @@
   "private": true,
   "devDependencies": {
     "jest": "^28.1.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ec2": "^3.87.0"
   }
 }
