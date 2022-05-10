@@ -3,6 +3,8 @@
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 
+const VpcNotFoundException = require('./exceptions/VpcNotFoundException.js');
+
 module.exports = class Vpc {
 	//region private attributes
 	#id;
@@ -27,7 +29,11 @@ module.exports = class Vpc {
 		return new Promise((resolve, reject) => {
 			ec2.describeVpcs({ VpcIds: [id] }, (err, data) => {
 				if (err) {
-					console.log(err);
+					if (err.code === 'InvalidVpcID.NotFound') {
+						reject(new VpcNotFoundException(id));
+					} else {
+						reject(err);
+					}	
 				} else {
 					const vpc = new Vpc(
 						data.Vpcs[0].VpcId,

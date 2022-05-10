@@ -1,4 +1,5 @@
 const Vpc = require("../Vpc.js");
+const VpcNotFoundException = require('../exceptions/VpcNotFoundException.js');
 
 test('describeVpcWithSubnets_ExistingVpcHavingSubnet_Success', async () => {
     // Given
@@ -17,4 +18,15 @@ test('describeVpcWithSubnets_ExistingVpcHavingSubnet_Success', async () => {
         expect(subnet).toEqual(expectedSubnetIds.shift());
     });
     */
+});
+
+test('describeVpcWithSubnets_NonExistingVpc_ThrowException', () => {
+	// Given
+	const wrongVpcId = 'yad7asdko6kokp512qo2';
+
+	// When
+    expect(async () => await Vpc.find(wrongVpcId)).rejects.toThrow(VpcNotFoundException);
+
+	// Then
+	// Exception is thrown
 });
