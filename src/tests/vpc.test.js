@@ -5,6 +5,7 @@ test('describeVpcWithSubnets_ExistingVpcHavingSubnet_Success', async () => {
     // Given
     const expectedVpcId = 'vpc-08584e8bf7e83d040';
     const expectedVpcIpRange = '10.0.0.0/24';
+    const expectedSubnetIds = ['subnet-00ebe6783616bc17c'];
 
     // When
     const vpc = await Vpc.find(expectedVpcId);
@@ -13,11 +14,9 @@ test('describeVpcWithSubnets_ExistingVpcHavingSubnet_Success', async () => {
     expect(vpc.id).toEqual(expectedVpcId);
     expect(vpc.ipRange).toEqual(expectedVpcIpRange);
 
-    /*
     vpc.subnets.forEach(subnet => {
-        expect(subnet).toEqual(expectedSubnetIds.shift());
+        expect(subnet.id).toEqual(expectedSubnetIds.shift());
     });
-    */
 });
 
 test('describeVpcWithSubnets_NonExistingVpc_ThrowException', () => {
