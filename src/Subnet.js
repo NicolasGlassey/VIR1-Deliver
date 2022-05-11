@@ -7,10 +7,6 @@ module.exports = class Subnet {
 
 	//region public methods
 
-	/**
-	 * @brief Constructor of the class Subnet
-	 * @returns {void}
-	 */
 	constructor(id) {
 		this.#id = id;
 	}
