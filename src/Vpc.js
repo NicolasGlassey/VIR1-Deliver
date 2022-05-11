@@ -15,7 +15,7 @@ module.exports = class Vpc {
 
 	//region public methods
 
-	constructor(id, ipRange, subnets) {
+	constructor(id, ipRange, subnets = []) {
 		this.#id = id;
 		this.#ipRange = ipRange;
 		this.#subnets = subnets;
@@ -37,8 +37,7 @@ module.exports = class Vpc {
 						reject(err);
 					}
 				} else {
-					const vpc = new Vpc(data.Vpcs[0].VpcId, data.Vpcs[0].CidrBlock, null);
-					resolve(vpc);
+					resolve(new Vpc(data.Vpcs[0].VpcId, data.Vpcs[0].CidrBlock));
 				}
 			});
 		}).then((vpc) => {
