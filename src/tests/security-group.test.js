@@ -14,4 +14,15 @@ describe('Security Group', () => {
         expect(securityGroups[1].id).toBe(expectedId);
         expect(securityGroups[1].description).toBe(expectedDescription);
     });
+
+    test('all_VpcWithoutSecurityGroups_EmptyArray', async () => {
+        // Given
+        const vpcId = 'vpc-11111111111111111';
+
+        // When
+        const securityGroups = await SecurityGroup.all(vpcId);
+
+        // Then
+        expect(securityGroups).toEqual([]);
+    });
 });
