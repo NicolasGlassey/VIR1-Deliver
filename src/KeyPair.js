@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 
 const KeyPairNotFoundException = require('./exceptions/KeyPairNotFoundException.js');
-const keyPairNotFound = 'InvalidKeyPair.NotFound';
+const KEY_PAIR_NOT_FOUND = 'InvalidKeyPair.NotFound';
 
 module.exports = class KeyPair {
 	//region private attributes
@@ -46,7 +46,7 @@ module.exports = class KeyPair {
 		return new Promise((resolve, reject) => {
 			ec2.describeKeyPairs(params, (err, data) => {
 				if (err) {
-					if (err.code === keyPairNotFound) {
+					if (err.code === KEY_PAIR_NOT_FOUND) {
 						reject(new KeyPairNotFoundException(value));
 					} else {
 						reject(err);

@@ -21,7 +21,7 @@ test('find_ExistingVpcHavingSubnet_Success', async () => {
 
 test('find_NonExistingVpc_ThrowException', () => {
 	// Given
-	const wrongVpcId = 'vpc-invalid';
+	const wrongVpcId = 'vpc-id-which-does-not-exist';
 
 	// When
     expect(async () => await Vpc.find(wrongVpcId)).rejects.toThrow(VpcNotFoundException);
