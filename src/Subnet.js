@@ -18,10 +18,11 @@ module.exports = class Subnet {
 
 	/**
 	 * @brief Fetches the Subnets of a given VPC from the AWS EC2 SDK
-	 * @returns {Promise<Subnet[]>}
+	 * @param {string} : id of a VPC
+	 * @returns {Promise<Subnet[]>} : Subnets of the given VPC
 	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSubnets-property
 	 */
-	static findByVpc(vpcId) {
+	static find(vpcId) {
 		return new Promise((resolve, reject) => {
 			ec2.describeSubnets({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] }, (err, data) => {
 				if (err) {

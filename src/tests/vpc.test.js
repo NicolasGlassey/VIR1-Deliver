@@ -1,11 +1,10 @@
 const Vpc = require("../Vpc.js");
 const VpcNotFoundException = require('../exceptions/VpcNotFoundException.js');
 
-test('find_ExistingVpcHavingSubnet_Success', async () => {
+test('find_ExistingVpc_Success', async () => {
     // Given
     const expectedVpcId = 'vpc-08584e8bf7e83d040';
     const expectedVpcIpRange = '10.0.0.0/24';
-    const expectedSubnetIds = ['subnet-00ebe6783616bc17c'];
 
     // When
     const vpc = await Vpc.find(expectedVpcId);
@@ -13,10 +12,6 @@ test('find_ExistingVpcHavingSubnet_Success', async () => {
     // Then
     expect(vpc.id).toEqual(expectedVpcId);
     expect(vpc.ipRange).toEqual(expectedVpcIpRange);
-
-    for (let i = 0; i < expectedSubnetIds.length; i++) {
-        expect(vpc.subnets[i].id).toEqual(expectedSubnetIds[i]);
-    }
 });
 
 test('find_NonExistingVpc_ThrowException', () => {
@@ -28,4 +23,19 @@ test('find_NonExistingVpc_ThrowException', () => {
 
 	// Then
 	// Exception is thrown
+});
+
+test('subnets_ExistingVpc_Success', async () => {
+	// Given
+	const givenVpcId = 'vpc-08584e8bf7e83d040';
+	const expectedSubnetIds = ['subnet-00ebe6783616bc17c'];
+
+	// When
+	const vpc = await Vpc.find(givenVpcId);
+	const subnets = await vpc.subnets;
+
+	// Then
+	for (let i = 0; i < expectedSubnetIds.length; i++) {
+		expect(subnets[i].id).toEqual(expectedSubnetIds[i]);
+	}
 });

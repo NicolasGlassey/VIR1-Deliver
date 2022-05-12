@@ -12,20 +12,19 @@ module.exports = class Vpc {
 	//region private attributes
 	#id;
 	#ipRange;
-	#subnets;
 	//endregion private attributes
 
 	//region public methods
 
-	constructor(id, ipRange, subnets = []) {
+	constructor(id, ipRange) {
 		this.#id = id;
 		this.#ipRange = ipRange;
-		this.#subnets = subnets;
 	}
 
 	/**
 	 * @brief Fetches the VPC with the given id from the AWS EC2 SDK
-	 * @returns {Promise<Vpc>}
+	 * @param {string} : id of a VPC
+	 * @returns {Promise<Vpc>} : VPC with the given id
 	 * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
 	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
 	 */
@@ -40,8 +39,7 @@ module.exports = class Vpc {
 					}
 				} else {
 					const vpc = data.Vpcs[0];
-					const subnets = await Subnet.findByVpc(id);
-					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock, subnets));
+					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock));
 				}
 			});
 		});
@@ -56,10 +54,6 @@ module.exports = class Vpc {
 	}
 
 	get subnets() {
-		return this.#subnets;
-	}
-
-	set subnets(subnets) {
-		this.#subnets = subnets;
+		return Subnet.find(this.id);
 	}
 };
