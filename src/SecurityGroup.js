@@ -23,10 +23,11 @@ module.exports = class SecurityGroup {
 
     /**
      * @brief Fetch all security groups from the AWS EC2 SDK.
-     * @params
+     * @param {string} vpcId The VPC ID to filter the security groups by.
      */
     static async all(vpcId) {
-        const result = await ec2.describeSecurityGroups({Filters: [{Name: 'vpc-id', Values: [vpcId]}]}).promise();
+        const result = await ec2.describeSecurityGroups({Filters: [{Name: 'vpc-id', Values: [vpcId]}]})
+                                .promise();
 
         return result.SecurityGroups.map(sg => {
             return new SecurityGroup(sg.GroupId, sg.Description);
