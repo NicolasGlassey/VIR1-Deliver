@@ -1,17 +1,46 @@
 'use strict';
 
+const AWS = require('aws-sdk');
+const ec2 = new AWS.EC2({ region: 'eu-west-3' });
+
 module.exports = class Subnet {
 	//region private attributes
 	#id;
+	#ipRange;
 	//endregion private attributes
 
 	//region public methods
 
-	constructor(id) {
+	constructor(id, ipRange) {
 		this.#id = id;
+		this.#ipRange = ipRange;
+	}
+
+	/**
+	 * @brief Fetches the Subnets of a given VPC from the AWS EC2 SDK
+	 * @returns {Promise<Subnet[]>}
+	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSubnets-property
+	 */
+	static findByVpc(vpcId) {
+		return new Promise((resolve, reject) => {
+			ec2.describeSubnets({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] }, (err, data) => {
+				if (err) {
+					reject(err);
+				} else {
+					const subnets = data.Subnets.map((subnet) => {
+						return new Subnet(subnet.SubnetId, subnet.CidrBlock);
+					});
+					resolve(subnets);
+				}
+			});
+		});
 	}
 
 	get id() {
 		return this.#id;
+	}
+
+	get ipRange() {
+		return this.#ipRange;
 	}
 };

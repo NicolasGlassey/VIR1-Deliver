@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
+
 const Subnet = require('./Subnet.js');
 
 const VpcNotFoundException = require('./exceptions/VpcNotFoundException.js');
@@ -22,14 +23,14 @@ module.exports = class Vpc {
 	}
 
 	/**
-	 * @brief Fetches the VPC with the given id from the AWS EC2 SDK and returns a Vpc object
-	 * @returns {void}
+	 * @brief Fetches the VPC with the given id from the AWS EC2 SDK
+	 * @returns {Promise<Vpc>}
 	 * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
 	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
 	 */
 	static find(id) {
 		return new Promise((resolve, reject) => {
-			ec2.describeVpcs({ VpcIds: [id] }, (err, data) => {
+			ec2.describeVpcs({ VpcIds: [id] }, async (err, data) => {
 				if (err) {
 					if (err.code === 'InvalidVpcID.NotFound') {
 						reject(new VpcNotFoundException(id));
@@ -37,25 +38,10 @@ module.exports = class Vpc {
 						reject(err);
 					}
 				} else {
-					resolve(new Vpc(data.Vpcs[0].VpcId, data.Vpcs[0].CidrBlock));
+					const vpc = data.Vpcs[0];
+					const subnets = await Subnet.findByVpc(id);
+					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock, subnets));
 				}
-			});
-		}).then((vpc) => {
-			return new Promise((resolve, reject) => {
-				ec2.describeSubnets(
-					{ Filters: [{ Name: 'vpc-id', Values: [vpc.id] }] },
-					(err, data) => {
-						if (err) {
-							reject(err);
-						} else {
-							const subnets = data.Subnets.map((subnet) => {
-								return new Subnet(subnet.SubnetId);
-							});
-							vpc.subnets = subnets;
-							resolve(vpc);
-						}
-					}
-				);
 			});
 		});
 	}
