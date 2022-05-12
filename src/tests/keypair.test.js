@@ -1,7 +1,7 @@
 const KeyPair = require("../KeyPair.js");
 const KeyPairNotFoundException = require('../exceptions/KeyPairNotFoundException.js');
 
-test('extractKeyPairByName_BasicCase_Success', async () => {
+test('findByName_BasicCase_Success', async () => {
     // Given
     const expectedKeyId = 'key-05c59bb0609bc8db5';
     const expectedKeyName = 'test';
@@ -14,7 +14,7 @@ test('extractKeyPairByName_BasicCase_Success', async () => {
     expect(key.name).toEqual(expectedKeyName);
 });
 
-test('extractKeyPairById_NonExistingId_ThrowException', async () => {
+test('findByName_NonExistingName_ThrowException', async () => {
     // Given
     const expectedKeyName = 'does-not-exist';
 
@@ -26,7 +26,7 @@ test('extractKeyPairById_NonExistingId_ThrowException', async () => {
 	// Exception is thrown
 });
 
-test('extractKeyPairById_BasicCase_Success', async () => {
+test('findById_BasicCase_Success', async () => {
     // Given
     const expectedKeyId = 'key-05c59bb0609bc8db5';
     const expectedKeyName = 'test';
@@ -39,7 +39,7 @@ test('extractKeyPairById_BasicCase_Success', async () => {
     expect(key.name).toEqual(expectedKeyName);
 });
 
-test('extractKeyPairById_NonExistingId_ThrowException', async () => {
+test('findById_NonExistingId_ThrowException', async () => {
     // Given
     const expectedKeyId = 'key-which-does-not-exist';
 
