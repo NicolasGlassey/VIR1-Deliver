@@ -20,12 +20,24 @@ test('describeVpcWithSubnets_ExistingVpcHavingSubnet_Success', async () => {
 });
 
 test('describeVpcWithSubnets_NonExistingVpc_ThrowException', () => {
-	// Given
-	const wrongVpcId = 'yad7asdko6kokp512qo2';
+    // Given
+    const wrongVpcId = 'yad7asdko6kokp512qo2';
 
-	// When
+    // When
     expect(async () => await Vpc.find(wrongVpcId)).rejects.toThrow(VpcNotFoundException);
 
-	// Then
-	// Exception is thrown
+    // Then
+    // Exception is thrown
+});
+
+test('securityGroups_ExistingVpc_Success', async () => {
+    // Given
+    const expectedVpcId = 'vpc-08584e8bf7e83d040';
+    const vpc = await Vpc.find(expectedVpcId);
+
+    // When
+    const securityGroups = await vpc.securityGroups;
+
+    // Then
+    expect(securityGroups.length).toBeGreaterThan(0);
 });

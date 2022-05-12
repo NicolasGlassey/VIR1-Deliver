@@ -5,6 +5,7 @@ const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 const Subnet = require('./Subnet.js');
 
 const VpcNotFoundException = require('./exceptions/VpcNotFoundException.js');
+const SecurityGroups = require("./SecurityGroup");
 
 module.exports = class Vpc {
 	//region private attributes
@@ -74,5 +75,9 @@ module.exports = class Vpc {
 
 	set subnets(subnets) {
 		this.#subnets = subnets;
+	}
+
+	get securityGroups() {
+		return SecurityGroups.all(this.id);
 	}
 };
