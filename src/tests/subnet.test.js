@@ -7,7 +7,7 @@ test('find_ExistingVpc_Success', async () => {
 	const expectedSubnetIds = ['subnet-00ebe6783616bc17c'];
 
 	// When
-	const subnets = await Subnet.find(givenVpcId);
+	const subnets = await Subnet.all(givenVpcId);
 
 	// Then
 	for (let i = 0; i < expectedSubnetIds.length; i++) {

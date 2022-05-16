@@ -55,7 +55,7 @@ module.exports = class Vpc {
 	}
 
 	get subnets() {
-		return Subnet.find(this.id);
+		return Subnet.all(this.id);
 	}
 
 	get securityGroups() {

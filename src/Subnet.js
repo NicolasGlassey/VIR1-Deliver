@@ -23,21 +23,12 @@ module.exports = class Subnet {
 	 * @returns {Promise<Subnet[]>} Subnets of the given VPC
 	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSubnets-property
 	 */
-	static find(vpcId) {
-		return new Promise((resolve, reject) => {
-			ec2.describeSubnets({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] }, (err, data) => {
-				if (err) {
-					reject(err);
-				} else {
-					const subnets = data.Subnets.map((subnet) => {
-						return new Subnet(subnet.SubnetId, subnet.CidrBlock);
-					});
+	static async all(vpcId) {
+		const result = await ec2.describeSubnets({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] })
+                                .promise();
 
-					Logger.info(`Describe Subnets of VPC ${vpcId}`);
-					resolve(subnets);
-				}
-			});
-		});
+		Logger.info(`Describe Subnets of VPC ${vpcId}`);
+        return result.Subnets.map(subnet => new Subnet(subnet.SubnetId, subnet.CidrBlock));
 	}
 
 	get id() {
