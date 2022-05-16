@@ -30,23 +30,20 @@ module.exports = class Vpc {
 	 * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
 	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
 	 */
-	static find(id) {
-		return new Promise((resolve, reject) => {
-			ec2.describeVpcs({ VpcIds: [id] }, async (err, data) => {
-				if (err) {
-					if (err.code === VPC_NOT_FOUND) {
-						reject(new VpcNotFoundException(id));
-					} else {
-						reject(err);
-					}
-				} else {
-					const vpc = data.Vpcs[0];
+	static async find(id) {
+		const handleError = err => {
+            if (err.code === VPC_NOT_FOUND)
+                throw new VpcNotFoundException(err.message);
+            throw err;
+        };
 
-					Logger.info(`Describe VPC ${vpc.VpcId}`);
-					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock));
-				}
-			});
-		});
+		const result = await ec2.describeVpcs({ VpcIds: [id] })
+                                .promise()
+                                .catch(handleError);
+		const vpc = result.Vpcs[0];
+
+		Logger.info(`Describe VPC ${vpc.VpcId}`);
+		return new Vpc(vpc.VpcId, vpc.CidrBlock);
 	}
 
 	get id() {
