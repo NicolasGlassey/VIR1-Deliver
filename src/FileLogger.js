@@ -10,8 +10,16 @@ module.exports = class FileLogger {
     static get #logger() {
         if (!FileLogger.#_logger) {
             log4js.configure({
-                appenders: { everything: { type: 'multiFile', base: 'logs/', property: 'level', extension: '.log' }, },
-                categories: { default: { appenders: ['everything'], level: 'ALL' } },
+                appenders: {
+                    default: {
+                        type: 'multiFile',
+                        base: 'logs/',
+                        property: 'level',
+                        extension: '.log',
+                        layout: { type: 'pattern', pattern: '[%d] [%p] - %m' },
+                    },
+                },
+                categories: { default: { appenders: ['default'], level: 'ALL' } },
             });
 
             FileLogger.#_logger = log4js.getLogger();

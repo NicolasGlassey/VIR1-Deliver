@@ -2,43 +2,39 @@ const FileLogger = require("../FileLogger");
 const fs = require("fs");
 
 describe('FileLogger', () => {
-    beforeAll(() => {
-        fs.readdirSync("./logs").forEach(file =>
-            fs.unlinkSync(`./logs/${file}`)
-        );
-    });
-
     test('info_LogInInfoLogFile_Success', async () => {
-        expect.hasAssertions();
-
         // Given
-        const message = "Test info message";
+        const message = 'Test info message';
+        const expectedLogLine = `[INFO] - ${message}`;
+        const infoLogFile = './logs/INFO.log';
 
         // When
         FileLogger.info(message);
 
         // Then
         await waitForFileToBeWritten();
-        const logFile = fs.readFileSync("./logs/INFO.log", "utf8");
-        expect(logFile).toContain(message);
+        expect(getLastLine(infoLogFile)).toContain(expectedLogLine);
     });
 
     test('error_LogInErrorLogFile_Success', async () => {
-        expect.hasAssertions();
-
         // Given
-        const message = "Test error message";
+        const message = 'Test error message';
+        const expectedLogLine = `[ERROR] - ${message}`;
+        const errorLogFile = './logs/ERROR.log';
 
         // When
         FileLogger.error(message);
 
         // Then
         await waitForFileToBeWritten();
-        const logFile = fs.readFileSync("./logs/ERROR.log", "utf8");
-        expect(logFile).toContain(message);
+        expect(getLastLine(errorLogFile)).toContain(expectedLogLine);
     });
 });
 
 async function waitForFileToBeWritten() {
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 100));
+}
+
+function getLastLine(filePath) {
+    return fs.readFileSync(filePath, "utf8").trim().split("\n").pop();
 }
