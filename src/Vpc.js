@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
+const Logger = require('./FileLogger')
 
 const SecurityGroups = require("./SecurityGroup.js");
 const Subnet = require('./Subnet.js');
@@ -40,6 +41,8 @@ module.exports = class Vpc {
 					}
 				} else {
 					const vpc = data.Vpcs[0];
+
+					Logger.info(`Describe VPC ${vpc.VpcId}`);
 					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock));
 				}
 			});
