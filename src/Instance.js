@@ -91,12 +91,15 @@ module.exports = class Instance {
 	 * @brief Fetches the keypair of the current instance
 	 * @returns {Promise<KeyPair>}
 	 */
-	keyPair() {
-		return KeyPair.findByName(this.keyName);
+	async keyPair() {
+		return await KeyPair.findByName(this.keyName);
 	}
 
+	/**
+	 * @brief Fetches the vpc of the current instance
+	 * @returns {Promise<Vpc>}
+	 */
 	async vpc() {
-		const vpc = await Vpc.find(this.vpcId);
-		return vpc;
+		return await Vpc.find(this.vpcId);
 	}
 };
