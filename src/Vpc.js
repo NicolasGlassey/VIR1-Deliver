@@ -6,6 +6,7 @@ const Logger = require('./FileLogger')
 
 const SecurityGroups = require("./SecurityGroup.js");
 const Subnet = require('./Subnet.js');
+const Instance = require('./Instance.js');
 
 const VpcNotFoundException = require('./exceptions/VpcNotFoundException.js');
 const VPC_NOT_FOUND = 'InvalidVpcID.NotFound';
@@ -37,7 +38,7 @@ module.exports = class Vpc {
             throw err;
         };
 
-		const result = await ec2.describeVpcs({ VpcIds: [id] })
+		const result = await ec2.describeVpcs({VpcIds: [id]})
                                 .promise()
                                 .catch(handleError);
 		const vpc = result.Vpcs[0];
@@ -60,5 +61,24 @@ module.exports = class Vpc {
 
 	get securityGroups() {
 		return SecurityGroups.all(this.id);
+	}
+
+	async instances() {
+		return Instance.findByVpcId(this.id);
+	}
+
+	/**
+	 * @brief Fetches all keypairs of this vpc's instances
+	 * @returns {Promise<[KeyPair]>} Array of keypairs
+	 */
+	async keyPairs() {
+		let keyPairs = [];
+		let instances = await this.instances();
+
+		for (let i = 0; i < instances.length; i++) {
+			keyPairs.push(await instances[i].keyPair());
+		}
+
+		return keyPairs;
 	}
 };
