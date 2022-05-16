@@ -46,6 +46,30 @@ module.exports = class Vpc {
 		return new Vpc(vpc.VpcId, vpc.CidrBlock);
 	}
 
+	/**
+	 * @brief Fetches the VPC with the given id from the AWS EC2 SDK
+	 * @returns {Promise<Vpc>}
+	 * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
+	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
+	 */
+	static find(id) {
+		return new Promise((resolve, reject) => {
+			ec2.describeInstances({ VpcIds: [id] }, async (err, data) => {
+				if (err) {
+					if (err.code === VPC_NOT_FOUND) {
+						reject(new VpcNotFoundException(id));
+					} else {
+						reject(err);
+					}
+				} else {
+					const vpc = data.Vpcs[0];
+					const subnets = await Subnet.findByVpc(id);
+					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock, subnets));
+				}
+			});
+		});
+	}
+
 	get id() {
 		return this.#id;
 	}
