@@ -67,6 +67,10 @@ module.exports = class Vpc {
 		return Instance.findByVpcId(this.id);
 	}
 
+	/**
+	 * @brief Fetches all keypairs of this vpc's instances
+	 * @returns {Promise<[KeyPair]>} Array of keypairs
+	 */
 	async keyPairs() {
 		let keyPairs = [];
 		let instances = await this.instances();
