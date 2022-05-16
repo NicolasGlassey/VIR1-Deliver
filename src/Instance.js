@@ -29,11 +29,23 @@ module.exports = class Instance {
 		this.#vpcId		= vpcId;
 	}
 
+	/*
+	 * @brief Fetch an instance from an id
+	 * @returns {Promise<Instance>}
+	 * @exception InstanceNotFoundException is thrown if the there is no instances with that id
+	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
+	 */
 	static async findById(id) {
 		let instance = await this.#findBy('instance-id', id);
 		return instance[0];
 	}
 
+	/*
+	 * @brief Fetch an instance from a vpc id
+	 * @returns {Promise<[Instance]>}
+	 * @exception InstanceNotFoundException is thrown if the there is no instances with that vpc id
+	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
+	 */
 	static async findByVpcId(id) {
 		return await this.#findBy('vpc-id', id);
 	}
@@ -60,7 +72,7 @@ module.exports = class Instance {
 		for (let i = 0; i < reservations.length; i++) {
 			instance = result.Reservations[i].Instances[0];
 
-		//	Logger.info(`Describe Instance ${instance.InstanceId}`);
+			Logger.info(`Describe Instance ${instance.InstanceId}`);
 			instances.push(new Instance(instance.InstanceId, instance.Tags[0].Value, instance.KeyName, instance.PlatformDetails, instance.VpcId));
 		}
 
