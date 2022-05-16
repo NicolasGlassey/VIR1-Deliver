@@ -6,6 +6,7 @@ const Logger = require('./FileLogger')
 
 const SecurityGroups = require("./SecurityGroup.js");
 const Subnet = require('./Subnet.js');
+const Instance = require('./Instance.js');
 
 const VpcNotFoundException = require('./exceptions/VpcNotFoundException.js');
 const VPC_NOT_FOUND = 'InvalidVpcID.NotFound';
@@ -37,37 +38,13 @@ module.exports = class Vpc {
             throw err;
         };
 
-		const result = await ec2.describeVpcs({ VpcIds: [id] })
+		const result = await ec2.describeVpcs({VpcIds: [id]})
                                 .promise()
                                 .catch(handleError);
 		const vpc = result.Vpcs[0];
 
 		Logger.info(`Describe VPC ${vpc.VpcId}`);
 		return new Vpc(vpc.VpcId, vpc.CidrBlock);
-	}
-
-	/**
-	 * @brief Fetches the VPC with the given id from the AWS EC2 SDK
-	 * @returns {Promise<Vpc>}
-	 * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
-	 * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
-	 */
-	static find(id) {
-		return new Promise((resolve, reject) => {
-			ec2.describeInstances({ VpcIds: [id] }, async (err, data) => {
-				if (err) {
-					if (err.code === VPC_NOT_FOUND) {
-						reject(new VpcNotFoundException(id));
-					} else {
-						reject(err);
-					}
-				} else {
-					const vpc = data.Vpcs[0];
-					const subnets = await Subnet.findByVpc(id);
-					resolve(new Vpc(vpc.VpcId, vpc.CidrBlock, subnets));
-				}
-			});
-		});
 	}
 
 	get id() {
@@ -84,5 +61,20 @@ module.exports = class Vpc {
 
 	get securityGroups() {
 		return SecurityGroups.all(this.id);
+	}
+
+	async instances() {
+		return Instance.findByVpcId(this.id);
+	}
+
+	async keyPairs() {
+		let keyPairs = [];
+		let instances = await this.instances();
+
+		for (let i = 0; i < instances.length; i++) {
+			keyPairs.push(await instances[i].keyPair());
+		}
+
+		return keyPairs;
 	}
 };

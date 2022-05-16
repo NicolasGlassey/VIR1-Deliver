@@ -1,9 +1,11 @@
 'use strict';
 
-const AWS = require('aws-sdk');
-const ec2 = new AWS.EC2({ region: 'eu-west-3' });
-const Logger = require('./FileLogger')
-const KeyPair = require('./KeyPair')
+const AWS		= require('aws-sdk');
+const ec2		= new AWS.EC2({ region: 'eu-west-3' });
+
+const Logger	= require('./FileLogger')
+const KeyPair	= require('./KeyPair')
+const Vpc		= require('./Vpc')
 
 const InstanceNotFoundException = require('./exceptions/InstanceNotFoundException.js');
 
@@ -13,19 +15,27 @@ module.exports = class Instance {
 	#name;
 	#keyName;
 	#platform;
+	#vpcId;
+
 	//endregion private attributes
 
 	//region public methods
 
-	constructor(id, name, keyName, platform) {
-		this.#id = id;
-		this.#name = name;
-		this.#keyName = keyName;
-		this.#platform = platform;
+	constructor(id, name, keyName, platform, vpcId) {
+		this.#id		= id;
+		this.#name		= name;
+		this.#keyName	= keyName;
+		this.#platform	= platform;
+		this.#vpcId		= vpcId;
 	}
 
 	static async findById(id) {
-		return await this.#findBy('instance-id', id);
+		let instance = await this.#findBy('instance-id', id);
+		return instance[0];
+	}
+
+	static async findByVpcId(id) {
+		return await this.#findBy('vpc-id', id);
 	}
 
 	/**
@@ -41,13 +51,20 @@ module.exports = class Instance {
                                 .promise()
 		
 		const reservations = result.Reservations;
-		if (reservations.length < 1) {
+		if (reservations.length == 0) {
 			throw new InstanceNotFoundException();
 		}
-		const instance = result.Reservations[0].Instances[0];
 
-		Logger.info(`Describe Instance ${instance.InstanceId}`);
-		return new Instance(instance.InstanceId, instance.Tags[0].Value, instance.KeyName, instance.PlatformDetails);
+		let instances = [];
+		let instance;
+		for (let i = 0; i < reservations.length; i++) {
+			instance = result.Reservations[i].Instances[0];
+
+		//	Logger.info(`Describe Instance ${instance.InstanceId}`);
+			instances.push(new Instance(instance.InstanceId, instance.Tags[0].Value, instance.KeyName, instance.PlatformDetails, instance.VpcId));
+		}
+
+		return instances;
 	}
 
 	get id() {
@@ -66,11 +83,20 @@ module.exports = class Instance {
 		return this.#platform;
 	}
 
+	get vpcId() {
+		return this.#vpcId;
+	}
+
 	/**
 	 * @brief Fetches the keypair of the current instance
 	 * @returns {Promise<KeyPair>}
 	 */
-	getKeyPair() {
+	keyPair() {
 		return KeyPair.findByName(this.keyName);
+	}
+
+	async vpc() {
+		const vpc = await Vpc.find(this.vpcId);
+		return vpc;
 	}
 };
