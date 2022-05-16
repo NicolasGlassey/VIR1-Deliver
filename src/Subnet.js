@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
+const Logger = require('./FileLogger');
 
 module.exports = class Subnet {
 	//region private attributes
@@ -31,6 +32,8 @@ module.exports = class Subnet {
 					const subnets = data.Subnets.map((subnet) => {
 						return new Subnet(subnet.SubnetId, subnet.CidrBlock);
 					});
+
+					Logger.info(`Describe Subnets of VPC ${vpcId}`);
 					resolve(subnets);
 				}
 			});
