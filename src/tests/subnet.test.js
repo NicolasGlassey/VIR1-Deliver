@@ -15,7 +15,7 @@ describe('Subnet', () => {
         }
     });
 
-    test('all_NonExistingVpc_ThrowException', async () => {
+    test('all_NonExistingVpc_EmptyArray', async () => {
         // Given
         const wrongVpcId = 'vpc-id-which-does-not-exist';
         const expectedSubnetIds = [];
