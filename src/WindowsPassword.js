@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 const InstanceNotFoundException = require("./exceptions/InstanceNotFoundException.js");
 const UnavailableInstancePasswordException = require("./exceptions/UnavailableInstancePasswordException.js");
+const Logger = require("./FileLogger");
 
 module.exports = class WindowsPassword {
     #instanceId
@@ -24,6 +25,7 @@ module.exports = class WindowsPassword {
      */
     static async find(instanceId) {
         const handleError = err => {
+            Logger.error(err.message);
             if (err.code.includes('InvalidInstanceID'))
                 throw new InstanceNotFoundException(err.message);
             throw err;
@@ -33,8 +35,10 @@ module.exports = class WindowsPassword {
                                 .promise()
                                 .catch(handleError);
 
-        if (!result.PasswordData)
+        if (!result.PasswordData) {
+            Logger.error(`Unavailable password for instance ${instanceId}`);
             throw new UnavailableInstancePasswordException(`The password of instance ${instanceId} is not available.`);
+        }
 
         return new WindowsPassword(result.InstanceId, result.PasswordData, result.Timestamp);
     }
