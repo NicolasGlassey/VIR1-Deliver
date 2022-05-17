@@ -20,7 +20,7 @@ describe('KeyPair', () => {
         const expectedKeyName = 'does-not-exist';
 
         // When
-        expect(async () => KeyPair.findByName(expectedKeyName)).rejects.toThrow(KeyPairNotFoundException);
+        await expect(KeyPair.findByName(expectedKeyName)).rejects.toThrow(KeyPairNotFoundException);
 
         // Then
         // Exception is thrown
@@ -41,10 +41,10 @@ describe('KeyPair', () => {
 
     test('findById_NonExistingId_ThrowException', async () => {
         // Given
-        const expectedKeyId = 'key-which-does-not-exist';
+        const expectedKeyId = 'key-05c59bb0609bc8db2';
 
         // When
-        expect(async () => await KeyPair.findById(expectedKeyId)).rejects.toThrow(KeyPairNotFoundException);
+        await expect(KeyPair.findById(expectedKeyId)).rejects.toThrow(KeyPairNotFoundException);
 
         // Then
         // Exception is thrown
