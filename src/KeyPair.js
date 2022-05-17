@@ -2,6 +2,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
+const Logger = require('./FileLogger')
 
 const KeyPairNotFoundException = require('./exceptions/KeyPairNotFoundException.js');
 const KEY_PAIR_NOT_FOUND = 'InvalidKeyPair.NotFound';
@@ -43,16 +44,20 @@ module.exports = class KeyPair {
         let params = {};
         params[filter] = [value];
 
+        const handleError = err => {
+            Logger.error(err.message);
+            if (err.code === KEY_PAIR_NOT_FOUND) {
+                throw new KeyPairNotFoundException(err.message);
+            }
+            throw err;
+        };
+
         const keys = await ec2.describeKeyPairs(params)
                               .promise()
-                              .catch(err => {
-                                  if (err.code === KEY_PAIR_NOT_FOUND)
-                                      throw new KeyPairNotFoundException(err.message);
-
-                                  throw err;
-                              });
+                              .catch(handleError);
         const key = keys.KeyPairs[0];
 
+        Logger.info(`Describe Keypair ${key.KeyName}`);
         return new KeyPair(key.KeyPairId, key.KeyName)
     }
 
