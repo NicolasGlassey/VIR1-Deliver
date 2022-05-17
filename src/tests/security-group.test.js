@@ -1,6 +1,6 @@
 const SecurityGroup = require('../SecurityGroup.js');
 
-describe('Security Group', () => {
+describe('SecurityGroup', () => {
     test('all_BasicCase_Success', async () => {
         // Given
         const expectedId = 'sg-004f6547219fdef6c';

@@ -29,7 +29,7 @@ module.exports = class Vpc {
      * @param id {string} Id of a VPC
      * @returns {Promise<Vpc>} VPC with the given id
      * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
-     * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
     static async find(id) {
         const handleError = err => {
@@ -63,22 +63,15 @@ module.exports = class Vpc {
         return SecurityGroups.all(this.id);
     }
 
-    async instances() {
+    get instances() {
         return Instance.findByVpcId(this.id);
     }
 
     /**
      * @brief Fetches all keypairs of this vpc's instances
-     * @returns {Promise<[KeyPair]>} Array of keypairs
+     * @returns {KeyPair[]} Array of keypairs
      */
-    async keyPairs() {
-        let keyPairs = [];
-        let instances = await this.instances();
-
-        for (let i = 0; i < instances.length; i++) {
-            keyPairs.push(await instances[i].keyPair());
-        }
-
-        return keyPairs;
+    get keyPairs() {
+        return this.instances.map(instance => instance.keyPair);
     }
 };

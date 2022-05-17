@@ -1,4 +1,4 @@
-const FileLogger = require("../FileLogger");
+const Logger = require("../FileLogger");
 const fs = require("fs");
 
 describe('FileLogger', () => {
@@ -9,7 +9,7 @@ describe('FileLogger', () => {
         const infoLogFile = './logs/INFO.log';
 
         // When
-        FileLogger.info(message);
+        Logger.info(message);
 
         // Then
         await waitForFileToBeWritten();
@@ -23,7 +23,7 @@ describe('FileLogger', () => {
         const errorLogFile = './logs/ERROR.log';
 
         // When
-        FileLogger.error(message);
+        Logger.error(message);
 
         // Then
         await waitForFileToBeWritten();

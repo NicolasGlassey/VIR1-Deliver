@@ -23,7 +23,7 @@ module.exports = class KeyPair {
      * @brief Fetch a keypair from an id
      * @returns {Promise}
      * @exception KeyPairNotFoundException is thrown if the there is no keypair with that id
-     * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
      */
     static findById(id) {
         return this.#findBy('KeyPairIds', id);
@@ -33,7 +33,7 @@ module.exports = class KeyPair {
      * @brief Fetch a keypair from a name
      * @returns {Promise}
      * @exception KeyPairNotFoundException is thrown if the there is no keypair with that name
-     * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
      */
     static findByName(name) {
         return this.#findBy('KeyNames', name);

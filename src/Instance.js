@@ -33,7 +33,7 @@ module.exports = class Instance {
      * @brief Fetch an instance from an id
      * @returns {Promise<Instance>}
      * @exception InstanceNotFoundException is thrown if the there is no instances with that id
-     * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     static async findById(id) {
         let instance = await this.#findBy('instance-id', id);
@@ -44,7 +44,7 @@ module.exports = class Instance {
      * @brief Fetch an instance from a vpc id
      * @returns {Promise<[Instance]>}
      * @exception InstanceNotFoundException is thrown if the there is no instances with that vpc id
-     * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     static async findByVpcId(id) {
         return await this.#findBy('vpc-id', id);
@@ -52,8 +52,8 @@ module.exports = class Instance {
 
     /**
      * @brief Fetches an instanced based on one of its properties
-     * @returns {Promise<Instance>}
-     * @link https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
+     * @returns {Promise<Instance[]>}
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     static async #findBy(filter, value) {
         let params = { Filters: [{ Name: filter, Values: [value] }] };
@@ -67,16 +67,11 @@ module.exports = class Instance {
             throw new InstanceNotFoundException();
         }
 
-        let instances = [];
-        let instance;
-        for (let i = 0; i < reservations.length; i++) {
-            instance = result.Reservations[i].Instances[0];
-
-            Logger.info(`Describe Instance ${instance.InstanceId}`);
-            instances.push(new Instance(instance.InstanceId, instance.Tags[0].Value, instance.KeyName, instance.PlatformDetails, instance.VpcId));
-        }
-
-        return instances;
+        Logger.info(`Describe Instances filtered by ${filter} with value ${value}`);
+        return reservations.map(reservation => {
+            const instance = reservation.Instances[0]
+            return new Instance(instance.InstanceId, instance.Tags[0].Value, instance.KeyName, instance.PlatformDetails, instance.VpcId);
+        });
     }
 
     get id() {
@@ -103,15 +98,15 @@ module.exports = class Instance {
      * @brief Fetches the keypair of the current instance
      * @returns {Promise<KeyPair>}
      */
-    async keyPair() {
-        return await KeyPair.findByName(this.keyName);
+    get keyPair() {
+        return KeyPair.findByName(this.keyName);
     }
 
     /**
      * @brief Fetches the vpc of the current instance
      * @returns {Promise<Vpc>}
      */
-    async vpc() {
-        return await Vpc.find(this.vpcId);
+    get vpc() {
+        return Vpc.find(this.vpcId);
     }
 };
