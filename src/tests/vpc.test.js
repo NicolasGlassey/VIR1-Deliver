@@ -15,12 +15,12 @@ describe('Vpc', () => {
         expect(vpc.ipRange).toEqual(expectedVpcIpRange);
     });
 
-    test('find_NonExistingVpc_ThrowException', () => {
+    test('find_NonExistingVpc_ThrowException', async () => {
         // Given
         const wrongVpcId = 'vpc-id-which-does-not-exist';
 
         // When
-        expect(async () => await Vpc.find(wrongVpcId)).rejects.toThrow(VpcNotFoundException);
+		await expect(Vpc.find(wrongVpcId)).rejects.toThrow(VpcNotFoundException);
 
         // Then
         // Exception is thrown
