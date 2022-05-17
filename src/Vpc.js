@@ -9,7 +9,6 @@ const Subnet = require('./Subnet.js');
 const Instance = require('./Instance.js');
 
 const VpcNotFoundException = require('./exceptions/VpcNotFoundException.js');
-const VPC_NOT_FOUND = 'InvalidVpcID.NotFound';
 
 module.exports = class Vpc {
     //region private attributes
@@ -33,8 +32,8 @@ module.exports = class Vpc {
      */
     static async find(id) {
         const handleError = err => {
-            if (err.code === VPC_NOT_FOUND)
-                throw new VpcNotFoundException(err.message);
+            Logger.error(err.message);            
+            if (err.code.includes('InvalidVpcID')) throw new VpcNotFoundException(err.message);
             throw err;
         };
 
