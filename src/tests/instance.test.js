@@ -20,19 +20,18 @@ test('findById_ExistingInstance_Success', async () => {
 
 test('findById_NonExistingInstance_ThrowException', async () => {
     // Given
-	const wrongInstanceId = 'instance-id-which-does-not-exist';
+    const wrongInstanceId = 'instance-id-which-does-not-exist';
 
-	// When
+    // When
     expect(async () => await Instance.findById(wrongInstanceId)).rejects.toThrow(InstanceNotFoundException);
 
-	// Then
-	// Exception is thrown
+    // Then
+    // Exception is thrown
 });
 
 test('keyPair_ExistingInstance_Success', async () => {
     // Given
     const expectedInstanceId = 'i-03d46dee061af282b';
-    const expectedInstanceKeyName = 'test';
 
     // When
     const instance = await Instance.findById(expectedInstanceId);
@@ -70,8 +69,6 @@ test('findByVpcId_ExistingVpcId_Success', async () => {
     const expectedInstanceKeyName = 'test';
     const expectedInstanceName = 'debian';
     const expectedInstancePlatform = 'Linux/UNIX';
-
-    const vpcId = 'vpc-08584e8bf7e83d040';
 
     // When
     const instance = await Instance.findById(expectedInstanceId);
