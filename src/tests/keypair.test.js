@@ -1,5 +1,5 @@
 const KeyPair = require("../KeyPair.js");
-const KeyPairNotFoundException = require('../exceptions/KeyPairNotFoundException.js');
+const KeyPairNotFoundException = require('../exceptions/key_pair/KeyPairNotFoundException.js');
 
 describe('KeyPair', () => {
     test('findByName_BasicCase_Success', async () => {

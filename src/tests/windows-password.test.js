@@ -1,6 +1,6 @@
 const WindowsPassword = require("../WindowsPassword.js");
-const InstanceNotFoundException = require("../exceptions/InstanceNotFoundException.js");
-const UnavailableInstancePasswordException = require("../exceptions/UnavailableInstancePasswordException.js");
+const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
+const UnavailableInstancePasswordException = require("../exceptions/instance/UnavailableInstancePasswordException.js");
 
 describe('WindowsPassword', () => {
     test('find_ExistingInstanceId_Success', async () => {

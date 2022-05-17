@@ -1,5 +1,5 @@
 const Vpc = require('../Vpc.js');
-const VpcNotFoundException = require('../exceptions/VpcNotFoundException.js');
+const VpcNotFoundException = require('../exceptions/vpc/VpcNotFoundException.js');
 
 describe('Vpc', () => {
     test('find_ExistingVpc_Success', async () => {

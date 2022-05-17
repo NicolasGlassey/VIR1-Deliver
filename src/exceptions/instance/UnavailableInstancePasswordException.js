@@ -1,4 +1,4 @@
-const InstanceException = require("./InstanceException.js");
+const InstanceException = require("../instance/InstanceException.js");
 
 module.exports = class UnavailableInstancePasswordException extends InstanceException {
 };

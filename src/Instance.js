@@ -7,7 +7,7 @@ const Logger = require('./FileLogger')
 const KeyPair = require('./KeyPair')
 const Vpc = require('./Vpc')
 
-const InstanceNotFoundException = require('./exceptions/InstanceNotFoundException.js');
+const InstanceNotFoundException = require('./exceptions/instance/InstanceNotFoundException.js');
 
 module.exports = class Instance {
     //region private attributes

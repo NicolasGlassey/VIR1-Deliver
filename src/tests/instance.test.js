@@ -1,5 +1,5 @@
 const Instance = require("../Instance.js");
-const InstanceNotFoundException = require('../exceptions/InstanceNotFoundException.js');
+const InstanceNotFoundException = require('../exceptions/instance/InstanceNotFoundException.js');
 
 describe('Instance', () => {
     test('findById_ExistingInstance_Success', async () => {
