@@ -7,27 +7,35 @@ const Logger = require('./FileLogger')
 const KeyPairNotFoundException = require('./exceptions/key_pair/KeyPairNotFoundException.js');
 const KEY_PAIR_NOT_FOUND = 'InvalidKeyPair.NotFound';
 
-module.exports = class KeyPair {
-    //region private attributes
-    #id;
-    #name;
-    //endregion private attributes
-
-    //region public methods
-
-    constructor(id, name) {
-        this.#id = id;
-        this.#name = name;
-    }
-
+module.exports = class KeyPairHelper {
     /**
-     * @brief Fetch a keypair from an id
-     * @returns {Promise}
-     * @exception KeyPairNotFoundException is thrown if the there is no keypair with that id
-     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
+     * @brief Check if the given name exists from the AWS EC2 SDK
+     * @param name {string} name of a KeyPair
+     * @returns {Boolean} true if the KeyPair exists, false otherwise
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
-    static findById(id) {
-        return this.#findBy('KeyPairIds', id);
+     static async exists(name) {
+        let params = {};
+        params['KeyNames'] = [name];
+
+        const handleError = err => {
+            Logger.error(err.message);
+            if (err.code === KEY_PAIR_NOT_FOUND) {
+                return false;
+            }
+            throw err;
+        };
+
+        const result = await ec2.describeKeyPairs(params)
+                              .promise()
+                              .catch(handleError);
+
+        Logger.info(`Describe Keypair ${name} to check if it exists`);
+        if (result) {
+            return result.KeyPairs.length !== 0;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -36,13 +44,9 @@ module.exports = class KeyPair {
      * @exception KeyPairNotFoundException is thrown if the there is no keypair with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
      */
-    static findByName(name) {
-        return this.#findBy('KeyNames', name);
-    }
-
-    static async #findBy(filter, value) {
+    static async describe(name) {
         let params = {};
-        params[filter] = [value];
+        params['KeyNames'] = [name];
 
         const handleError = err => {
             Logger.error(err.message);
@@ -58,14 +62,6 @@ module.exports = class KeyPair {
         const key = keys.KeyPairs[0];
 
         Logger.info(`Describe Keypair ${key.KeyName}`);
-        return new KeyPair(key.KeyPairId, key.KeyName)
-    }
-
-    get id() {
-        return this.#id;
-    }
-
-    get name() {
-        return this.#name;
+        return key;
     }
 }
