@@ -1,27 +1,26 @@
-const Subnet = require('../Subnet.js');
+const Subnet = require('../SubnetHelper.js');
+const Vpc = require("../VpcHelper.js");
 
 describe('Subnet', () => {
-    test('all_ExistingVpc_Success', async () => {
+    test('describe_ExistingVpc_Success', async () => {
         // Given
-        const givenVpcId = 'vpc-08584e8bf7e83d040';
-        const expectedSubnetIds = ['subnet-00ebe6783616bc17c'];
+        const givenVpcId = await Vpc.describe('vpc-paris').then(vpc => vpc.VpcId);
+        const expectedSubnetCount = 1;
 
         // When
-        const subnets = await Subnet.all(givenVpcId);
+        const subnets = await Subnet.describe(givenVpcId);
 
         // Then
-        for (let i = 0; i < expectedSubnetIds.length; i++) {
-            expect(subnets[i].id).toEqual(expectedSubnetIds[i]);
-        }
+        expect(subnets.length).toEqual(expectedSubnetCount);
     });
 
-    test('all_NonExistingVpc_EmptyArray', async () => {
+    test("describe_NonExistingVpc_EmptyArray", async () => {
         // Given
-        const wrongVpcId = 'vpc-id-which-does-not-exist';
+        const wrongVpcId = "vpc-id-which-does-not-exist";
         const expectedSubnetIds = [];
 
         // When
-        const subnets = await Subnet.all(wrongVpcId);
+        const subnets = await Subnet.describe(wrongVpcId);
 
         // Then
         expect(subnets).toEqual(expectedSubnetIds);

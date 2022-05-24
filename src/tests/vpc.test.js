@@ -5,12 +5,14 @@ describe('Vpc', () => {
     test('describe_ExistingVpc_Success', async () => {
         // Given
         const expectedVpcName = 'vpc-paris';
+        const expectedSubnetCount = 1;
 
         // When
         const vpc = await Vpc.describe(expectedVpcName);
 
         // Then
         expect(vpc.Name).toEqual(expectedVpcName);
+        expect(vpc.Subnets.length).toEqual(expectedSubnetCount);
     });
 
     test('describe_NonExistingVpc_ThrowException', async () => {
@@ -22,21 +24,6 @@ describe('Vpc', () => {
 
         // Then
         // Exception is thrown
-    });
-
-    test('subnets_ExistingVpc_Success', async () => {
-        // Given
-        const givenVpcId = 'vpc-08584e8bf7e83d040';
-        const expectedSubnetIds = ['subnet-00ebe6783616bc17c'];
-
-        // When
-        const vpc = await Vpc.find(givenVpcId);
-        const subnets = await vpc.subnets;
-
-        // Then
-        for (let i = 0; i < expectedSubnetIds.length; i++) {
-            expect(subnets[i].id).toEqual(expectedSubnetIds[i]);
-        }
     });
 
     test('securityGroups_ExistingVpc_Success', async () => {
