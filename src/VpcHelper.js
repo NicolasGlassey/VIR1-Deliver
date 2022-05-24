@@ -62,20 +62,4 @@ module.exports = class VpcHelper {
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
     }
-
-    get securityGroups() {
-        return SecurityGroups.all(this.id);
-    }
-
-    get instances() {
-        return Instance.findByVpcId(this.id);
-    }
-
-    /**
-     * @brief Fetches all keypairs of this vpc's instances
-     * @returns {KeyPair[]} Array of keypairs
-     */
-    get keyPairs() {
-        return this.instances.map((instance) => instance.keyPair);
-    }
 };
