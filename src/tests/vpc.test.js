@@ -1,26 +1,24 @@
-const Vpc = require('../Vpc.js');
+const Vpc = require('../VpcHelper.js');
 const VpcNotFoundException = require('../exceptions/vpc/VpcNotFoundException.js');
 
 describe('Vpc', () => {
-    test('find_ExistingVpc_Success', async () => {
+    test('describe_ExistingVpc_Success', async () => {
         // Given
-        const expectedVpcId = 'vpc-08584e8bf7e83d040';
-        const expectedVpcIpRange = '10.0.0.0/24';
+        const expectedVpcName = 'vpc-paris';
 
         // When
-        const vpc = await Vpc.find(expectedVpcId);
+        const vpc = await Vpc.describe(expectedVpcName);
 
         // Then
-        expect(vpc.id).toEqual(expectedVpcId);
-        expect(vpc.ipRange).toEqual(expectedVpcIpRange);
+        expect(vpc.Name).toEqual(expectedVpcName);
     });
 
-    test('find_NonExistingVpc_ThrowException', async () => {
+    test('describe_NonExistingVpc_ThrowException', async () => {
         // Given
-        const wrongVpcId = 'vpc-id-which-does-not-exist';
+        const wrongVpcName = 'vpc-name-which-does-not-exist';
 
         // When
-		await expect(Vpc.find(wrongVpcId)).rejects.toThrow(VpcNotFoundException);
+		await expect(Vpc.describe(wrongVpcName)).rejects.toThrow(VpcNotFoundException);
 
         // Then
         // Exception is thrown
