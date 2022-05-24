@@ -4,9 +4,7 @@ const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 const Logger = require('./FileLogger')
 
-const SecurityGroups = require("./SecurityGroup.js");
 const Subnet = require('./SubnetHelper.js');
-const Instance = require('./Instance.js');
 
 const VpcNotFoundException = require('./exceptions/vpc/VpcNotFoundException.js');
 
