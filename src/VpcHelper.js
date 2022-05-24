@@ -35,7 +35,7 @@ module.exports = class VpcHelper {
     /**
      * @brief Fetches the VPC with the given name from the AWS EC2 SDK
      * @param name {string} name of a VPC
-     * @returns {Promise<Object>} VPC with the given name
+     * @returns {Promise<EC2.Vpc>} VPC with the given name
      * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
