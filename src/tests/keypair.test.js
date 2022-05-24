@@ -2,7 +2,7 @@ const KeyPairHelper = require("../KeyPairHelper.js");
 const KeyPairNotFoundException = require('../exceptions/key_pair/KeyPairNotFoundException.js');
 
 describe('KeyPair', () => {
-    test('exists_BasicCase_Success', async () => {
+    test('describe_BasicCase_Success', async () => {
         // Given
         const expectedKeyName = 'test';
 
@@ -15,13 +15,12 @@ describe('KeyPair', () => {
 
     test('describe_BasicCase_Failure', async () => {
         // Given
-        const expectedKeyName = 'test';
+        const expectedKeyName = 'non-existing-keyname';
 
         // When
-        const key = await KeyPairHelper.describe(expectedKeyName);
+        await expect(KeyPairHelper.describe(expectedKeyName)).rejects.toThrow(KeyPairNotFoundException);
 
         // Then
-        expect(key.KeyName).toEqual(expectedKeyName);
     });
 
 

@@ -11,7 +11,7 @@ module.exports = class KeyPairHelper {
     /**
      * @brief Check if the given name exists from the AWS EC2 SDK
      * @param name {string} name of a KeyPair
-     * @returns {Boolean} true if the KeyPair exists, false otherwise
+     * @returns {boolean} true if the KeyPair exists, false otherwise
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
      static async exists(name) {
