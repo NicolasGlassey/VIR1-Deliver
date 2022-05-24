@@ -4,7 +4,7 @@ const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js"
 describe("Vpc", () => {
     test("exists_ExistingVpc_True", async () => {
         // Given
-        const givenVpcName = "vpc-paris";
+        const givenVpcName = "vpc-deliver";
         const expectedResult = true;
 
         // When
@@ -28,7 +28,7 @@ describe("Vpc", () => {
 
     test("describe_ExistingVpc_Success", async () => {
         // Given
-        const expectedVpcName = "vpc-paris";
+        const expectedVpcName = "vpc-deliver";
         const expectedSubnetCount = 1;
 
         // When

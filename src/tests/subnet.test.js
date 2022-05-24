@@ -4,7 +4,7 @@ const Vpc = require("../VpcHelper.js");
 describe('Subnet', () => {
     test('describe_ExistingVpc_Success', async () => {
         // Given
-        const givenVpcId = await Vpc.describe('vpc-paris').then(vpc => vpc.VpcId);
+        const givenVpcId = await Vpc.describe('vpc-deliver').then(vpc => vpc.VpcId);
         const expectedSubnetCount = 1;
 
         // When
