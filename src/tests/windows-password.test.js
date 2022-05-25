@@ -1,10 +1,9 @@
 const WindowsPassword = require('../WindowsPasswordHelper.js');
-const InstanceNotFoundException = require(
-    '../exceptions/instance/InstanceNotFoundException.js');
+const InstanceNotFoundException = require('../exceptions/instance/InstanceNotFoundException.js');
 const UnavailableInstancePasswordException = require("../exceptions/instance/UnavailableInstancePasswordException.js");
 
 describe('WindowsPassword', () => {
-    test('find_ExistingInstanceId_Success', async () => {
+    test('describe_ExistingInstanceName_Success', async () => {
         // Given
         const instanceName = 'WINDOWS_INSTANCE';
         const expectedInstanceId = 'i-0e7dcbe8cf352ad91';
@@ -18,27 +17,23 @@ describe('WindowsPassword', () => {
         expect(result.Timestamp).toBeInstanceOf(Date);
     });
 
-    test('find_NonExistingInstanceId_ThrowException', async () => {
+    test('describe_NonExistingInstanceName_ThrowException', async () => {
         // Given
         const instanceName = 'WINDOWS_INSTANCE_NON_EXISTING';
 
         // When
-        await expect(WindowsPassword.describe(instanceName)).
-        rejects.
-        toThrow(InstanceNotFoundException);
+        await expect(WindowsPassword.describe(instanceName)).rejects.toThrow(InstanceNotFoundException);
 
         // Then
         // Exception is thrown
     });
 
-    test('find_LinuxInstanceId_ThrowException', async () => {
+    test('describe_LinuxInstanceName_ThrowException', async () => {
         // Given
         const instanceId = 'debian';
 
         // When
-        await expect(WindowsPassword.describe(instanceId)).
-        rejects.
-        toThrow(UnavailableInstancePasswordException);
+        await expect(WindowsPassword.describe(instanceId)).rejects.toThrow(UnavailableInstancePasswordException);
 
         // Then
         // Exception is thrown
