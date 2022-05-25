@@ -1,0 +1,13 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant Client
+participant VPC
+participant Subnet
+participant AWS
+
+Client -> VPC: Vpc.find(vpcId)
+
+@enduml

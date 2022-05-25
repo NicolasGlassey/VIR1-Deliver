@@ -1,5 +1,4 @@
 const SecurityGroupHelper = require('../SecurityGroupHelper.js');
-const VpcHelper = require('../VpcHelper');
 
 describe('SecurityGroupHelper', () => {
     test('describe_BasicCase_Success', async () => {
