@@ -10,12 +10,12 @@ const InstanceNotFoundException = require('./exceptions/instance/InstanceNotFoun
 module.exports = class InstanceHelper {
     /**
      * @brief Check if the given name exists from the AWS EC2 SDK
-     * @param name {string} name of a Instance
+     * @param name {Promise<string>} name of an Instance
      * @returns {boolean} true if the Instance exists, false otherwise
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     static async exists(name) {
-        // function allways return empty array even if instance does not exist
+        // function always return empty array even if instance does not exist
         const handleError = err => {
             Logger.error(err.message);
             throw err;
@@ -32,7 +32,7 @@ module.exports = class InstanceHelper {
 
     /**
      * @brief Fetch an instance from its name
-     * @returns {Instance}
+     * @returns {Promise<AWS.EC2.Instance>}
      * @exception InstanceNotFound is thrown if the there is no instance with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
