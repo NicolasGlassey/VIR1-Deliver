@@ -1,5 +1,10 @@
 const SecurityGroupHelper = require('../SecurityGroupHelper.js');
 
+//TODO NGY naming convention (file name with "-" ?)
+
+//TODO NGY create exists method first
+//TODO NGY add, remove, list rules
+
 describe('SecurityGroupHelper', () => {
     test('describe_BasicCase_Success', async () => {
         // Given
