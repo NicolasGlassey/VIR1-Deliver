@@ -1,26 +1,29 @@
 const Vpc = require("../VpcHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
+// using before each / all
+
+
 describe("Vpc", () => {
-    test("exists_ExistingVpc_True", async () => {
+    test("exists_ExistingVpc_Success", async () => {
         // Given
         const givenVpcName = "vpc-deliver";
         const expectedResult = true;
 
         // When
-        const result = await Vpc.exists(givenVpcName);
+        const result = await vpc.exists(givenVpcName);
 
         // Then
         expect(result).toBe(expectedResult);
     });
 
-    test("exists_NonExistingVpc_False", async () => {
+    test("exists_NonExistingVpc_Success", async () => {
         // Given
         const givenVpcName = "vpc-name-which-does-not-exist";
         const expectedResult = false;
 
         // When
-        const result = await Vpc.exists(givenVpcName);
+        const result = await vpc.exists(givenVpcName);
 
         // Then
         expect(result).toBe(expectedResult);
@@ -32,7 +35,7 @@ describe("Vpc", () => {
         const expectedSubnetCount = 1;
 
         // When
-        const vpc = await Vpc.describe(expectedVpcName);
+        const vpc = await vpc.describe(expectedVpcName);
 
         // Then
         expect(vpc.Name).toEqual(expectedVpcName);
@@ -52,3 +55,5 @@ describe("Vpc", () => {
         // Exception is thrown
     });
 });
+
+//using after each / all
