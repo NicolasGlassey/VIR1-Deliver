@@ -1,7 +1,11 @@
 const Instance = require("../Instance.js");
 const InstanceNotFoundException = require('../exceptions/instance/InstanceNotFoundException.js');
 
+//TODO NGY - using before all / each
+
+
 describe('Instance', () => {
+    //TODO NGY findbyId must be private. Rewrite it as "exists(instanceName)"
     test('findById_ExistingInstance_Success', async () => {
         // Given
         const expectedInstanceId = 'i-03d46dee061af282b';
@@ -19,6 +23,7 @@ describe('Instance', () => {
         expect(instance.platform).toEqual(expectedInstancePlatform);
     });
 
+    //TODO NGY findbyId must be private. Rewrite it as "exists(instanceName)"
     test('findById_NonExistingInstance_ThrowException', async () => {
         // Given
         const wrongInstanceId = 'instance-id-which-does-not-exist';
@@ -30,6 +35,7 @@ describe('Instance', () => {
         // Exception is thrown
     });
 
+    //TODO NGY - why are you testing keypair method in instance test file ?
     test('keyPair_ExistingInstance_Success', async () => {
         // Given
         const expectedInstanceId = 'i-03d46dee061af282b';
@@ -43,6 +49,7 @@ describe('Instance', () => {
         expect(instance.keyName).toEqual(keyPair.name);
     });
 
+    //TODO NGY - move this test in the correct test file
     test('findByVpcId_ExistingVpcId_Success', async () => {
         // Given
         const expectedInstanceId = 'i-03d46dee061af282b';
@@ -64,6 +71,7 @@ describe('Instance', () => {
         expect(vpc.id).toEqual(vpcId);
     });
 
+    //TODO NGY - move this test in the correct test file
     test('findByVpcId_ExistingVpcId_Success', async () => {
         // Given
         const expectedInstanceId = 'i-03d46dee061af282b';
@@ -82,3 +90,5 @@ describe('Instance', () => {
     });
 
 });
+
+//TODO NGY - using after all / each
