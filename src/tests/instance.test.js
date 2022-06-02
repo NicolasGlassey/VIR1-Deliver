@@ -1,6 +1,9 @@
 const InstanceHelper = require("../InstanceHelper.js");
 const InstanceNotFoundException = require('../exceptions/instance/InstanceNotFoundException.js');
 
+//TODO NGY - using before all / each
+
+
 describe('Instance', () => {
     test('describe_ExistingInstance_Success', async () => {
         // Given
@@ -47,3 +50,5 @@ describe('Instance', () => {
         // Then
     });
 });
+
+//TODO NGY - using after all / each
