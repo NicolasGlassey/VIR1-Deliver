@@ -1,84 +1,49 @@
-const Instance = require("../Instance.js");
+const InstanceHelper = require("../InstanceHelper.js");
 const InstanceNotFoundException = require('../exceptions/instance/InstanceNotFoundException.js');
 
 describe('Instance', () => {
-    test('findById_ExistingInstance_Success', async () => {
+    test('describe_ExistingInstance_Success', async () => {
         // Given
-        const expectedInstanceId = 'i-03d46dee061af282b';
-        const expectedInstanceKeyName = 'test';
         const expectedInstanceName = 'debian';
+        const expectedInstanceKeyName = 'test';
         const expectedInstancePlatform = 'Linux/UNIX';
 
         // When
-        const instance = await Instance.findById(expectedInstanceId);
+        const instance = await InstanceHelper.describe(expectedInstanceName);
 
         // Then
-        expect(instance.id).toEqual(expectedInstanceId);
-        expect(instance.name).toEqual(expectedInstanceName);
-        expect(instance.keyName).toEqual(expectedInstanceKeyName);
-        expect(instance.platform).toEqual(expectedInstancePlatform);
+        expect(instance.Tags[0].Value).toEqual(expectedInstanceName);
+        expect(instance.KeyName).toEqual(expectedInstanceKeyName);
+        expect(instance.PlatformDetails).toEqual(expectedInstancePlatform);
     });
 
-    test('findById_NonExistingInstance_ThrowException', async () => {
+    test('describe_NonExistingInstance_ThrowsException', async () => {
         // Given
-        const wrongInstanceId = 'instance-id-which-does-not-exist';
+        const expectedInstanceName = 'non-existing-instance';
 
         // When
-        expect(async () => await Instance.findById(wrongInstanceId)).rejects.toThrow(InstanceNotFoundException);
+        await expect(InstanceHelper.describe(expectedInstanceName)).rejects.toThrow(InstanceNotFoundException);
 
         // Then
-        // Exception is thrown
     });
 
-    test('keyPair_ExistingInstance_Success', async () => {
+    test('exists_ExistingInstance_Success', async () => {
         // Given
-        const expectedInstanceId = 'i-03d46dee061af282b';
-
-        // When
-        const instance = await Instance.findById(expectedInstanceId);
-        const keyPair = await instance.keyPair;
-
-        // Then
-        expect(instance.id).toEqual(expectedInstanceId);
-        expect(instance.keyName).toEqual(keyPair.name);
-    });
-
-    test('findByVpcId_ExistingVpcId_Success', async () => {
-        // Given
-        const expectedInstanceId = 'i-03d46dee061af282b';
-        const expectedInstanceKeyName = 'test';
         const expectedInstanceName = 'debian';
-        const expectedInstancePlatform = 'Linux/UNIX';
-
-        const vpcId = 'vpc-08584e8bf7e83d040';
 
         // When
-        const instance = await Instance.findById(expectedInstanceId);
-        const vpc = await instance.vpc;
+        expect(await InstanceHelper.exists(expectedInstanceName)).toEqual(true);
 
         // Then
-        expect(instance.id).toEqual(expectedInstanceId);
-        expect(instance.name).toEqual(expectedInstanceName);
-        expect(instance.keyName).toEqual(expectedInstanceKeyName);
-        expect(instance.platform).toEqual(expectedInstancePlatform);
-        expect(vpc.id).toEqual(vpcId);
     });
 
-    test('findByVpcId_ExistingVpcId_Success', async () => {
+    test('exists_NonExistingInstance_Success', async () => {
         // Given
-        const expectedInstanceId = 'i-03d46dee061af282b';
-        const expectedInstanceKeyName = 'test';
-        const expectedInstanceName = 'debian';
-        const expectedInstancePlatform = 'Linux/UNIX';
+        const expectedInstanceName = 'non-existing-instance';
 
         // When
-        const instance = await Instance.findById(expectedInstanceId);
+        expect(await InstanceHelper.exists(expectedInstanceName)).toEqual(false);
 
         // Then
-        expect(instance.id).toEqual(expectedInstanceId);
-        expect(instance.name).toEqual(expectedInstanceName);
-        expect(instance.keyName).toEqual(expectedInstanceKeyName);
-        expect(instance.platform).toEqual(expectedInstancePlatform);
     });
-
 });

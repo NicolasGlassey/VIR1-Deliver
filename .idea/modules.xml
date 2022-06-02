@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/VIR1-Deploy.iml" filepath="$PROJECT_DIR$/.idea/VIR1-Deploy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../VIR1-Deliver/.idea/VIR1-Deliver.iml" filepath="$PROJECT_DIR$/../VIR1-Deliver/.idea/VIR1-Deliver.iml" />
     </modules>
   </component>
 </project>

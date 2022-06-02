@@ -1,50 +1,46 @@
-const KeyPair = require("../KeyPair.js");
+const KeyPairHelper = require("../KeyPairHelper.js");
 const KeyPairNotFoundException = require('../exceptions/key_pair/KeyPairNotFoundException.js');
 
 describe('KeyPair', () => {
-    test('findByName_BasicCase_Success', async () => {
+    test('describe_BasicCase_Success', async () => {
         // Given
-        const expectedKeyId = 'key-05c59bb0609bc8db5';
         const expectedKeyName = 'test';
 
         // When
-        const key = await KeyPair.findByName(expectedKeyName);
+        const key = await KeyPairHelper.describe(expectedKeyName);
 
         // Then
-        expect(key.id).toEqual(expectedKeyId);
-        expect(key.name).toEqual(expectedKeyName);
+        expect(key.KeyName).toEqual(expectedKeyName);
     });
 
-    test('findByName_NonExistingName_ThrowException', async () => {
+    test('describe_BasicCase_Failure', async () => {
         // Given
-        const expectedKeyName = 'does-not-exist';
+        const expectedKeyName = 'non-existing-keyname';
 
         // When
-        await expect(KeyPair.findByName(expectedKeyName)).rejects.toThrow(KeyPairNotFoundException);
+        await expect(KeyPairHelper.describe(expectedKeyName)).rejects.toThrow(KeyPairNotFoundException);
+
+        // Then
+    });
+
+
+    test('exists_ExistingName_ThrowException', async () => {
+        // Given
+        const expectedKeyName = 'test';
+
+        // When
+        expect(await KeyPairHelper.exists(expectedKeyName)).toEqual(true);
 
         // Then
         // Exception is thrown
     });
 
-    test('findById_BasicCase_Success', async () => {
+    test('exists_NotExistingName_ThrowException', async () => {
         // Given
-        const expectedKeyId = 'key-05c59bb0609bc8db5';
-        const expectedKeyName = 'test';
+        const expectedKeyName = 'does-not-exist';
 
         // When
-        const key = await KeyPair.findById(expectedKeyId);
-
-        // Then
-        expect(key.id).toEqual(expectedKeyId);
-        expect(key.name).toEqual(expectedKeyName);
-    });
-
-    test('findById_NonExistingId_ThrowException', async () => {
-        // Given
-        const expectedKeyId = 'key-05c59bb0609bc8db2';
-
-        // When
-        await expect(KeyPair.findById(expectedKeyId)).rejects.toThrow(KeyPairNotFoundException);
+        expect(await KeyPairHelper.exists(expectedKeyName)).toEqual(false);
 
         // Then
         // Exception is thrown
