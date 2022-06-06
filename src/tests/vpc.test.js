@@ -3,6 +3,7 @@ const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js"
 
 describe("Vpc", () => {
     let vpc = null;
+    let givenVpcName = null;
 
     beforeAll(() => {
         vpc = new Vpc();
@@ -10,7 +11,7 @@ describe("Vpc", () => {
 
     test("exists_ExistingVpc_Success", async () => {
         // Given
-        const givenVpcName = "vpc-deliver";
+        givenVpcName = "vpc-deliver";
         const expectedResult = true;
 
         // When
@@ -22,7 +23,7 @@ describe("Vpc", () => {
 
     test("exists_NonExistingVpc_Success", async () => {
         // Given
-        const givenVpcName = "vpc-name-which-does-not-exist";
+        givenVpcName = "vpc-name-which-does-not-exist";
         const expectedResult = false;
 
         // When
@@ -34,20 +35,18 @@ describe("Vpc", () => {
 
     test("describe_ExistingVpc_Success", async () => {
         // Given
-        const expectedVpcName = "vpc-deliver";
-        const expectedSubnetCount = 1;
+        givenVpcName = "vpc-deliver";
 
         // When
-        const result = await vpc.describe(expectedVpcName);
+        const result = await vpc.describe(givenVpcName);
 
         // Then
-        expect(result.Name).toEqual(expectedVpcName);
-        expect(result.Subnets.length).toEqual(expectedSubnetCount);
+        expect(result.Name).toEqual(givenVpcName);
     });
 
     test("describe_NonExistingVpc_ThrowException", async () => {
         // Given
-        const givenVpcName = "vpc-name-which-does-not-exist";
+        givenVpcName = "vpc-name-which-does-not-exist";
 
         // When
         await expect(vpc.describe(givenVpcName)).rejects.toThrow(

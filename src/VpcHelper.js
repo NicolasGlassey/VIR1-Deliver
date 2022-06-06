@@ -4,8 +4,6 @@ const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 const Logger = require('./FileLogger')
 
-const Subnet = require('./SubnetHelper.js');
-
 const VpcNotFoundException = require('./exceptions/vpc/VpcNotFoundException.js');
 
 module.exports = class VpcHelper {
@@ -55,7 +53,6 @@ module.exports = class VpcHelper {
 
         let vpc = result.Vpcs[0];
         vpc.Name = vpc.Tags.find((tag) => tag.Key === "Name").Value;
-        vpc.Subnets = await Subnet.describe(vpc.VpcId);
 
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
