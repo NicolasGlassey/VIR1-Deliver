@@ -16,11 +16,13 @@ module.exports = class SubnetHelper {
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSubnets-property
      */
     async describe(vpc) {
-        const id = await (new VpcHelper).describe(vpc).then((vpc) => vpc.VpcId);
-        const result = await ec2.describeSubnets({ Filters: [{ Name: 'vpc-id', Values: [id] }] })
+        const id = await new VpcHelper().describe(vpc).then((vpc) => vpc.VpcId);
+        const result = await ec2.describeSubnets({ Filters: [{ Name: "vpc-id", Values: [id] }] })
                                 .promise();
 
         Logger.info(`Describe Subnets of VPC ${vpc}`);
         return result.Subnets;
     }
+
+    //endregion public methods
 };

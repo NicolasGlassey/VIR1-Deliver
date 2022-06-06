@@ -57,4 +57,6 @@ module.exports = class VpcHelper {
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
     }
+
+    //end region public methods
 };
