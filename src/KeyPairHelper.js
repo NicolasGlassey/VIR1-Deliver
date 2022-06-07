@@ -2,7 +2,7 @@
 
 const AWS = require("aws-sdk");
 const ec2 = new AWS.EC2({ region: "eu-west-3" });
-const Logger = require("./FileLogger");
+const { Logger } = require("vir1-core");
 
 const KeyPairNotFoundException = require("./exceptions/key_pair/KeyPairNotFoundException.js");
 const KEY_PAIR_NOT_FOUND = "InvalidKeyPair.NotFound";

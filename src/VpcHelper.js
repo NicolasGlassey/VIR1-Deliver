@@ -2,7 +2,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
-const Logger = require('./FileLogger')
+const { Logger } = require("vir1-core");
 
 const VpcNotFoundException = require('./exceptions/vpc/VpcNotFoundException.js');
 
