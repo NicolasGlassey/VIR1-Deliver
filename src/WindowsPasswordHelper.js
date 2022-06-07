@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 const InstanceNotFoundException = require("./exceptions/instance/InstanceNotFoundException.js");
 const UnavailableInstancePasswordException = require("./exceptions/instance/UnavailableInstancePasswordException.js");
-const Logger = require('./FileLogger');
+const { Logger } = require("vir1-core");
 const InstanceHelper = require('./InstanceHelper');
 
 module.exports = class WindowsPasswordHelper {

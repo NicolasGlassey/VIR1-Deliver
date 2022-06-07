@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1131.0",
-    "log4js": "^6.4.6"
+    "log4js": "^6.4.6",
+    "vir1-core": "^1.0.1"
   }
 }
