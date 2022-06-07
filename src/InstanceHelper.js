@@ -11,7 +11,7 @@ module.exports = class InstanceHelper {
 
     /**
      * @brief Check if the given name exists from the AWS EC2 SDK
-     * @param name {Promise<string>} name of an Instance
+     * @param name {string} name of an Instance
      * @returns {boolean} true if the Instance exists, false otherwise
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
@@ -35,6 +35,7 @@ module.exports = class InstanceHelper {
 
     /**
      * @brief Fetch an instance from its name
+     * @param name {string} name of an Instance
      * @returns {Promise<AWS.EC2.Instance>}
      * @exception InstanceNotFound is thrown if the there is no instance with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
