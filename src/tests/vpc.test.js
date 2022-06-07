@@ -1,26 +1,33 @@
-const Vpc = require("../VpcHelper.js");
+const VpcHelper = require("../VpcHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
 describe("Vpc", () => {
-    test("exists_ExistingVpc_True", async () => {
+    let vpc = null;
+    let givenVpcName = null;
+
+    beforeEach(() => {
+        vpc = new VpcHelper();
+    });
+
+    test("exists_ExistingVpc_Success", async () => {
         // Given
-        const givenVpcName = "vpc-deliver";
+        givenVpcName = "vpc-deliver";
         const expectedResult = true;
 
         // When
-        const result = await Vpc.exists(givenVpcName);
+        const result = await vpc.exists(givenVpcName);
 
         // Then
         expect(result).toBe(expectedResult);
     });
 
-    test("exists_NonExistingVpc_False", async () => {
+    test("exists_NonExistingVpc_Success", async () => {
         // Given
-        const givenVpcName = "vpc-name-which-does-not-exist";
+        givenVpcName = "vpc-name-which-does-not-exist";
         const expectedResult = false;
 
         // When
-        const result = await Vpc.exists(givenVpcName);
+        const result = await vpc.exists(givenVpcName);
 
         // Then
         expect(result).toBe(expectedResult);
@@ -28,23 +35,21 @@ describe("Vpc", () => {
 
     test("describe_ExistingVpc_Success", async () => {
         // Given
-        const expectedVpcName = "vpc-deliver";
-        const expectedSubnetCount = 1;
+        givenVpcName = "vpc-deliver";
 
         // When
-        const vpc = await Vpc.describe(expectedVpcName);
+        const result = await vpc.describe(givenVpcName);
 
         // Then
-        expect(vpc.Name).toEqual(expectedVpcName);
-        expect(vpc.Subnets.length).toEqual(expectedSubnetCount);
+        expect(result.Name).toEqual(givenVpcName);
     });
 
     test("describe_NonExistingVpc_ThrowException", async () => {
         // Given
-        const givenVpcName = "vpc-name-which-does-not-exist";
+        givenVpcName = "vpc-name-which-does-not-exist";
 
         // When
-        await expect(Vpc.describe(givenVpcName)).rejects.toThrow(
+        await expect(vpc.describe(givenVpcName)).rejects.toThrow(
             VpcNotFoundException
         );
 

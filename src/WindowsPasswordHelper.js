@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 const InstanceNotFoundException = require("./exceptions/instance/InstanceNotFoundException.js");
 const UnavailableInstancePasswordException = require("./exceptions/instance/UnavailableInstancePasswordException.js");
-const Logger = require('./FileLogger');
+const { Logger } = require("vir1-core");
 const InstanceHelper = require('./InstanceHelper');
 
 module.exports = class WindowsPasswordHelper {
@@ -14,7 +14,7 @@ module.exports = class WindowsPasswordHelper {
      * @returns {Promise<AWS.EC2.GetPasswordDataResult>}
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#getPasswordData-property
      */
-    static async describe(instanceName) {
+    async describe(instanceName) {
         const handleError = err => {
             Logger.error(err.message);
             if (err.code.includes('InvalidInstanceID')) {
@@ -23,11 +23,8 @@ module.exports = class WindowsPasswordHelper {
             throw err;
         };
 
-        const instanceId = await InstanceHelper.describe(instanceName).
-                                                then(
-                                                    instance => instance.InstanceId);
-        const passwordDataResult = await ec2.getPasswordData(
-            {InstanceId: instanceId}).promise().catch(handleError);
+        const instanceId = await new InstanceHelper().describe(instanceName).then(instance => instance.InstanceId);
+        const passwordDataResult = await ec2.getPasswordData({ InstanceId: instanceId }).promise().catch(handleError);
 
         if (!passwordDataResult.PasswordData) {
             Logger.error(`Unavailable password for instance ${instanceId}`);

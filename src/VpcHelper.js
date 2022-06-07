@@ -2,9 +2,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
-const Logger = require('./FileLogger')
-
-const Subnet = require('./SubnetHelper.js');
+const { Logger } = require("vir1-core");
 
 const VpcNotFoundException = require('./exceptions/vpc/VpcNotFoundException.js');
 
@@ -17,7 +15,7 @@ module.exports = class VpcHelper {
      * @returns {Promise<boolean>} true if the VPC exists, false otherwise
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
-    static async exists(name) {
+    async exists(name) {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
@@ -36,10 +34,10 @@ module.exports = class VpcHelper {
      * @brief Fetches the VPC with the given name from the AWS EC2 SDK
      * @param name {string} name of a VPC
      * @returns {Promise<EC2.Vpc>} VPC with the given name
-     * @exception VpcNotFoundException is thrown if the vpc doesn't exist.
+     * @exception VpcNotFoundException is thrown if the there is no instance with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
-    static async describe(name) {
+    async describe(name) {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
@@ -55,9 +53,10 @@ module.exports = class VpcHelper {
 
         let vpc = result.Vpcs[0];
         vpc.Name = vpc.Tags.find((tag) => tag.Key === "Name").Value;
-        vpc.Subnets = await Subnet.describe(vpc.VpcId);
 
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
     }
+
+    //endregion public methods
 };

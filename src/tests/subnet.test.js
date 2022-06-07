@@ -1,28 +1,36 @@
-const Subnet = require('../SubnetHelper.js');
-const Vpc = require("../VpcHelper.js");
+const SubnetHelper = require("../SubnetHelper.js");
+const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
-describe('Subnet', () => {
-    test('describe_ExistingVpc_Success', async () => {
+describe("Subnet", () => {
+    let subnet = null;
+    let givenVpcName = null;
+
+    beforeEach(() => {
+        subnet = new SubnetHelper();
+    });
+
+    test("describe_ExistingVpc_Success", async () => {
         // Given
-        const givenVpcId = await Vpc.describe('vpc-deliver').then(vpc => vpc.VpcId);
+        givenVpcName = "vpc-deliver";
         const expectedSubnetCount = 1;
 
         // When
-        const subnets = await Subnet.describe(givenVpcId);
+        const subnets = await subnet.describe(givenVpcName);
 
         // Then
         expect(subnets.length).toEqual(expectedSubnetCount);
     });
 
-    test("describe_NonExistingVpc_EmptyArray", async () => {
+    test("describe_NonExistingVpc_ThrowException", async () => {
         // Given
-        const wrongVpcId = "vpc-id-which-does-not-exist";
-        const expectedSubnetIds = [];
+        givenVpcName = "vpc-name-which-does-not-exist";
 
         // When
-        const subnets = await Subnet.describe(wrongVpcId);
+        await expect(subnet.describe(givenVpcName)).rejects.toThrow(
+            VpcNotFoundException
+        );
 
         // Then
-        expect(subnets).toEqual(expectedSubnetIds);
+        // Exception is thrown
     });
 });

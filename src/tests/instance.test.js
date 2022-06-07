@@ -1,48 +1,58 @@
 const InstanceHelper = require("../InstanceHelper.js");
-const InstanceNotFoundException = require('../exceptions/instance/InstanceNotFoundException.js');
+const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
 
-describe('Instance', () => {
-    test('describe_ExistingInstance_Success', async () => {
-        // Given
-        const expectedInstanceName = 'debian';
-        const expectedInstanceKeyName = 'test';
-        const expectedInstancePlatform = 'Linux/UNIX';
+describe("Instance", () => {
+    let instance = null;
+    let givenInstanceName = null;
 
-        // When
-        const instance = await InstanceHelper.describe(expectedInstanceName);
-
-        // Then
-        expect(instance.Tags[0].Value).toEqual(expectedInstanceName);
-        expect(instance.KeyName).toEqual(expectedInstanceKeyName);
-        expect(instance.PlatformDetails).toEqual(expectedInstancePlatform);
+    beforeEach(() => {
+        instance = new InstanceHelper();
     });
 
-    test('describe_NonExistingInstance_ThrowsException', async () => {
+    test("describe_ExistingInstance_Success", async () => {
         // Given
-        const expectedInstanceName = 'non-existing-instance';
+        givenInstanceName = "debian";
+        const expectedInstanceKeyName = "test";
+        const expectedInstancePlatform = "Linux/UNIX";
 
         // When
-        await expect(InstanceHelper.describe(expectedInstanceName)).rejects.toThrow(InstanceNotFoundException);
+        const result = await instance.describe(givenInstanceName);
+
+        // Then
+        expect(result.Tags[0].Value).toEqual(givenInstanceName);
+        expect(result.KeyName).toEqual(expectedInstanceKeyName);
+        expect(result.PlatformDetails).toEqual(expectedInstancePlatform);
+    });
+
+    test("describe_NonExistingInstance_ThrowsException", async () => {
+        // Given
+        givenInstanceName = "non-existing-instance";
+
+        // When
+        await expect(instance.describe(givenInstanceName)).rejects.toThrow(
+            InstanceNotFoundException
+        );
+
+        // Then
+        // Exception is thrown
+    });
+
+    test("exists_ExistingInstance_Success", async () => {
+        // Given
+        givenInstanceName = "debian";
+
+        // When
+        expect(await instance.exists(givenInstanceName)).toEqual(true);
 
         // Then
     });
 
-    test('exists_ExistingInstance_Success', async () => {
+    test("exists_NonExistingInstance_Success", async () => {
         // Given
-        const expectedInstanceName = 'debian';
+        givenInstanceName = "non-existing-instance";
 
         // When
-        expect(await InstanceHelper.exists(expectedInstanceName)).toEqual(true);
-
-        // Then
-    });
-
-    test('exists_NonExistingInstance_Success', async () => {
-        // Given
-        const expectedInstanceName = 'non-existing-instance';
-
-        // When
-        expect(await InstanceHelper.exists(expectedInstanceName)).toEqual(false);
+        expect(await instance.exists(givenInstanceName)).toEqual(false);
 
         // Then
     });
