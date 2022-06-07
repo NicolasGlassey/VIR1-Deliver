@@ -14,7 +14,7 @@ module.exports = class KeyPairHelper {
      * @returns {boolean} true if the KeyPair exists, false otherwise
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
-     static async exists(name) {
+     async exists(name) {
         let params = {};
         params['KeyNames'] = [name];
 
@@ -44,7 +44,7 @@ module.exports = class KeyPairHelper {
      * @exception KeyPairNotFoundException is thrown if the there is no keypair with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
      */
-    static async describe(name) {
+    async describe(name) {
         let params = {};
         params['KeyNames'] = [name];
 
