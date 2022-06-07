@@ -6,7 +6,7 @@ describe('SecurityGroupHelper', () => {
     /** @type {string} */
     let securityGroupName;
 
-    beforeAll(() => {
+    beforeEach(() => {
         securityGroup = new SecurityGroupHelper();
         securityGroupName = '';
     });

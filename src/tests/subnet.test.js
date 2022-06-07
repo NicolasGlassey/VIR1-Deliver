@@ -5,7 +5,7 @@ describe("Subnet", () => {
     let subnet = null;
     let givenVpcName = null;
 
-    beforeAll(() => {
+    beforeEach(() => {
         subnet = new SubnetHelper();
     });
 

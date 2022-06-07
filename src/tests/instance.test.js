@@ -1,13 +1,11 @@
 const InstanceHelper = require("../InstanceHelper.js");
 const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
 
-//TODO NGY - using before all / each
-
 describe("Instance", () => {
     let instance = null;
     let givenInstanceName = null;
 
-    beforeAll(() => {
+    beforeEach(() => {
         instance = new InstanceHelper();
     });
 

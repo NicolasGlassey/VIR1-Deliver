@@ -5,7 +5,7 @@ describe("Vpc", () => {
     let vpc = null;
     let givenVpcName = null;
 
-    beforeAll(() => {
+    beforeEach(() => {
         vpc = new VpcHelper();
     });
 

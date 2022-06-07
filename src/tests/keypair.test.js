@@ -5,7 +5,7 @@ describe("KeyPair", () => {
     let keypair = null;
     let givenKeyPairName = null;
 
-    beforeAll(() => {
+    beforeEach(() => {
         keypair = new KeyPairHelper();
     });
 

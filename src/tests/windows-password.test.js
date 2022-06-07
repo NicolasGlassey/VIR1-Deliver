@@ -6,13 +6,17 @@ describe('WindowsPassword', () => {
     /** @type {WindowsPasswordHelper} */
     let windowsPassword;
 
-    beforeAll(async () => {
+    /** @type {string} */
+    let instanceName;
+
+    beforeEach(async () => {
         windowsPassword = new WindowsPasswordHelper();
+        instanceName = '';
     });
 
     test('describe_ExistingInstanceName_Success', async () => {
         // Given
-        const instanceName = 'WINDOWS_INSTANCE';
+        instanceName = 'WINDOWS_INSTANCE';
         const expectedInstanceId = 'i-0e7dcbe8cf352ad91';
 
         // When
@@ -26,7 +30,7 @@ describe('WindowsPassword', () => {
 
     test('describe_NonExistingInstanceName_ThrowException', async () => {
         // Given
-        const instanceName = 'WINDOWS_INSTANCE_NON_EXISTING';
+        instanceName = 'WINDOWS_INSTANCE_NON_EXISTING';
 
         // When
         await expect(windowsPassword.describe(instanceName)).rejects.toThrow(InstanceNotFoundException);
@@ -37,7 +41,7 @@ describe('WindowsPassword', () => {
 
     test('describe_LinuxInstanceName_ThrowException', async () => {
         // Given
-        const instanceName = 'debian';
+        instanceName = 'debian';
 
         // When
         await expect(windowsPassword.describe(instanceName)).rejects.toThrow(UnavailableInstancePasswordException);
