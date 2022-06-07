@@ -1,4 +1,4 @@
-const Subnet = require("../SubnetHelper.js");
+const SubnetHelper = require("../SubnetHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
 describe("Subnet", () => {
@@ -6,7 +6,7 @@ describe("Subnet", () => {
     let givenVpcName = null;
 
     beforeAll(() => {
-        subnet = new Subnet();
+        subnet = new SubnetHelper();
     });
 
     test("describe_ExistingVpc_Success", async () => {

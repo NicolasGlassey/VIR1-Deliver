@@ -1,4 +1,4 @@
-const Vpc = require("../VpcHelper.js");
+const VpcHelper = require("../VpcHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
 describe("Vpc", () => {
@@ -6,7 +6,7 @@ describe("Vpc", () => {
     let givenVpcName = null;
 
     beforeAll(() => {
-        vpc = new Vpc();
+        vpc = new VpcHelper();
     });
 
     test("exists_ExistingVpc_Success", async () => {
