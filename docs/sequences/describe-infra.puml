@@ -1,0 +1,40 @@
+@startuml Describe infrastructure
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant Client
+participant DescribeInfra as Infra
+participant VpcHelper as Vpc #white
+participant SubnetHelper as Subnet #white
+participant SecurityGroupHelper as SecurityGroup #white
+participant KeyPairHelper as KeyPair #white
+participant InstanceHelper as Instance #white
+
+note right Client
+VIR1_deliver
+Describe infrastructure
+Author : Yannick Baudraz
+Date : 2022-06-09
+end note
+
+Client -> Infra: describe(vpcName)
+
+Infra -> Vpc : describe(VpcName)
+Vpc --> Infra : vpc information
+
+Infra -> Subnet : describe(vpcName)
+Subnet --> Infra : subnet information
+
+Infra -> SecurityGroup : describe(vpcName)
+SecurityGroup --> Infra : security groups information
+
+Infra -> KeyPair : describe(keyName)
+KeyPair --> Infra : key pairs information
+
+Infra -> Instance : describe(instanceName)
+Instance --> Infra : instances information
+
+Infra --> Client : Json string containing all information\nabout the infrastructure
+
+@enduml
