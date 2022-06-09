@@ -1,6 +1,15 @@
 @startuml
 skinparam classAttributeIconSize 0
 
+note as t1
+VIR1_deliver
+Class diagram
+Authors
+    Yannick Baudraz
+    Armand Marechal
+Date : 2022-06-09
+end note
+
 class Infra as "DescribeInfra" #aliceblue {
     +Constructor(awsClient : AwsCloudCLientImpl)
     +describe(vpcName : String) : string

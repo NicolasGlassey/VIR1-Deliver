@@ -13,7 +13,7 @@ participant InstanceHelper as Instance
 
 note right Client
 VIR1_deliver
-Describe infrastructure
+Describe infrastructure sequence
 Author : Yannick Baudraz
 Date : 2022-06-09
 end note
