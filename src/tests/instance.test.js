@@ -2,11 +2,12 @@ const InstanceHelper = require("../InstanceHelper.js");
 const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
 
 describe("Instance", () => {
-    let instance = null;
-    let givenInstanceName = null;
+    let instance;
+    let givenInstanceName;
 
     beforeEach(() => {
         instance = new InstanceHelper();
+        givenInstanceName = "";
     });
 
     test("describe_ExistingInstance_Success", async () => {

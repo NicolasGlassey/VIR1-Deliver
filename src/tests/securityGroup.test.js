@@ -1,6 +1,6 @@
-const SecurityGroupHelper = require('../SecurityGroupHelper.js');
+const SecurityGroupHelper = require("../SecurityGroupHelper.js");
 
-describe('SecurityGroupHelper', () => {
+describe("SecurityGroupHelper", () => {
     /** @type {SecurityGroupHelper} */
     let securityGroup;
     /** @type {string} */
@@ -8,23 +8,23 @@ describe('SecurityGroupHelper', () => {
 
     beforeEach(() => {
         securityGroup = new SecurityGroupHelper();
-        securityGroupName = '';
+        securityGroupName = "";
     });
 
-    test('exists_ExistingInstance_Success', async () => {
+    test("exists_ExistingInstance_Success", async () => {
         // Given
-        securityGroupName = 'default';
+        securityGroupName = "default";
 
         // When
         const result = await securityGroup.exists(securityGroupName);
 
         // Then
         expect(result).toBeTruthy();
-    })
+    });
 
-    test('exists_NonExistingInstance_Success', async () => {
+    test("exists_NonExistingInstance_Success", async () => {
         // Given
-        securityGroupName = 'non-existing';
+        securityGroupName = "non-existing";
 
         // When
         const result = await securityGroup.exists(securityGroupName);
@@ -33,30 +33,40 @@ describe('SecurityGroupHelper', () => {
         expect(result).toBeFalsy();
     });
 
-    test('describe_ExistingSecurityGroupName_Success', async () => {
+    test("describe_ExistingSecurityGroupName_Success", async () => {
         // Given
-        securityGroupName = 'default';
-        const securityGroupDescription = 'default VPC security group';
-        const vpcName = 'vpc-deliver';
+        securityGroupName = "default";
+        const securityGroupDescription = "default VPC security group";
+        const vpcName = "vpc-deliver";
 
         // When
-        const securityGroups = await securityGroup.describe(vpcName, securityGroupName);
+        const securityGroups = await securityGroup.describe(
+            vpcName,
+            securityGroupName
+        );
 
         // Then
-        const actualSecurityGroup = securityGroups.find(sg => sg.GroupName === securityGroupName);
+        const actualSecurityGroup = securityGroups.find(
+            (sg) => sg.GroupName === securityGroupName
+        );
         expect(actualSecurityGroup.GroupName).toBe(securityGroupName);
         expect(actualSecurityGroup.Description).toBe(securityGroupDescription);
         expect(actualSecurityGroup.IpPermissions.length).toBeGreaterThan(0);
-        expect(actualSecurityGroup.IpPermissionsEgress.length).toBeGreaterThan(0);
+        expect(actualSecurityGroup.IpPermissionsEgress.length).toBeGreaterThan(
+            0
+        );
     });
 
-    test('describe_NonExistingSecurityGroupName_Success', async () => {
+    test("describe_NonExistingSecurityGroupName_Success", async () => {
         // Given
-        securityGroupName = 'non-existing';
-        const vpcName = 'vpc-deliver';
+        securityGroupName = "non-existing";
+        const vpcName = "vpc-deliver";
 
         // When
-        const securityGroups = await securityGroup.describe(vpcName, securityGroupName);
+        const securityGroups = await securityGroup.describe(
+            vpcName,
+            securityGroupName
+        );
 
         // Then
         expect(securityGroups).toEqual([]);
