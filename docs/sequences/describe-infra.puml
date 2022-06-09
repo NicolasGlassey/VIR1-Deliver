@@ -3,13 +3,13 @@
 
 autonumber
 
-participant Client
-participant DescribeInfra as Infra
-participant VpcHelper as Vpc #white
-participant SubnetHelper as Subnet #white
-participant SecurityGroupHelper as SecurityGroup #white
-participant KeyPairHelper as KeyPair #white
-participant InstanceHelper as Instance #white
+participant Client #aliceblue
+participant DescribeInfra as Infra #aliceblue
+participant VpcHelper as Vpc
+participant SubnetHelper as Subnet
+participant SecurityGroupHelper as SecurityGroup
+participant KeyPairHelper as KeyPair
+participant InstanceHelper as Instance
 
 note right Client
 VIR1_deliver

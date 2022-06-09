@@ -1,13 +1,87 @@
 @startuml
+skinparam classAttributeIconSize 0
 
-class DescribeInfra {
-    Constructor(awsClient : AwsCloudCLientImpl)
-    describe(vpcName : String) : string
+class Infra as "DescribeInfra" #aliceblue {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +describe(vpcName : String) : string
 }
 
-class Credentials {
-    Constructor(awsClient : AwsCloudCLientImpl)
-    describe(instanceName : String) : string
+class Credentials #aliceblue {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +describe(instanceName : String) : object
 }
+
+class VpcHelper {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +exists(vpcName : string) : boolean
+    +describe(vpcName : String) : object
+}
+
+class SubnetHelper {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +exists(vpcName : string) : boolean
+    +describe(vpcName : String) : object
+}
+
+class SecurityGroupHelper {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +exists(securityGroupName : string) : boolean
+    +describe(vpcName : String) : object
+}
+
+class InstanceHelper {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +exists(instanceName : string) : boolean
+    +describe(instanceName : String) : object
+}
+
+class KeyPairHelper {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +exists(instanceName : string) : boolean
+    +describe(instanceName : String) : object
+}
+
+class WindowsPasswordHelper {
+    +Constructor(awsClient : AwsCloudCLientImpl)
+    +describe(instanceName : String) : object
+}
+
+together {
+    class Error
+    class VpcException
+    class VpcNotFoundException
+    class InstanceException
+    class InstanceNotFoundException
+    class UnavailableInstancePasswordsException
+    class KeyPairException
+    class KeyPairNotFoundException
+}
+
+Infra ..> VpcHelper
+Infra ..> SubnetHelper
+Infra ..> SecurityGroupHelper
+Infra ..> InstanceHelper
+Infra ..> KeyPairHelper
+
+Credentials ..> WindowsPasswordHelper
+Credentials ..> KeyPairHelper
+
+VpcException --|> Error
+VpcNotFoundException --|> VpcException
+InstanceException --|> Error
+InstanceNotFoundException --|> InstanceException
+UnavailableInstancePasswordsException --|> InstanceException
+KeyPairException --|> Error
+KeyPairNotFoundException --|> KeyPairException
+
+SubnetHelper ..> VpcHelper
+SecurityGroupHelper ..> VpcHelper
+WindowsPasswordHelper ..> InstanceHelper
+
+VpcHelper ..> VpcNotFoundException
+InstanceHelper ..> InstanceNotFoundException
+KeyPairHelper ..> KeyPairNotFoundException
+WindowsPasswordHelper ..> InstanceNotFoundException
+WindowsPasswordHelper ..> UnavailableInstancePasswordsException
 
 @enduml
