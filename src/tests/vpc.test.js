@@ -2,11 +2,12 @@ const VpcHelper = require("../VpcHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
 describe("Vpc", () => {
-    let vpc = null;
-    let givenVpcName = null;
+    let vpc;
+    let givenVpcName;
 
     beforeEach(() => {
         vpc = new VpcHelper();
+        givenVpcName = "";
     });
 
     test("exists_ExistingVpc_Success", async () => {

@@ -2,11 +2,12 @@ const KeyPairHelper = require("../KeyPairHelper.js");
 const KeyPairNotFoundException = require("../exceptions/key_pair/KeyPairNotFoundException.js");
 
 describe("KeyPair", () => {
-    let keypair = null;
-    let givenKeyPairName = null;
+    let keypair;
+    let givenKeyPairName;
 
     beforeEach(() => {
         keypair = new KeyPairHelper();
+        givenKeyPairName = "";
     });
 
     test("exists_ExistingName_Success", async () => {
