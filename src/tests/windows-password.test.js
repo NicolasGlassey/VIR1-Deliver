@@ -17,13 +17,11 @@ describe('WindowsPassword', () => {
     test('describe_ExistingInstanceName_Success', async () => {
         // Given
         instanceName = 'WINDOWS_INSTANCE';
-        const expectedInstanceId = 'i-0e7dcbe8cf352ad91';
 
         // When
         const result = await windowsPassword.describe(instanceName);
 
         // Then
-        expect(result.InstanceId).toEqual(expectedInstanceId);
         expect(result.PasswordData).toBeDefined();
         expect(result.Timestamp).toBeInstanceOf(Date);
     });
