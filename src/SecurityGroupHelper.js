@@ -31,22 +31,37 @@ module.exports = class SecurityGroup {
      * @returns {Promise<AWS.EC2.SecurityGroupList>} The security groups of the vpc.
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSecurityGroups-property
      */
-    async describe(vpcName, securityGroupName) {
+    async describe(vpcName, securityGroupName = '') {
+        return securityGroupName
+            ? await this.#describeWithVpcAndSecurityGroup(vpcName, securityGroupName)
+            : await this.#describeWithVpc(vpcName);
+    }
+
+    async #describeWithVpcAndSecurityGroup(vpcName, securityGroupName) {
         const vpcId = await new VpcHelper().describe(vpcName).then(vpc => vpc.VpcId);
-
-        const handleError = (err) => {
-            Logger.error(err.message);
-            throw err;
-        };
-
         const result = await ec2.describeSecurityGroups({
             Filters: [
                 { Name: 'vpc-id', Values: [vpcId] },
                 { Name: 'group-name', Values: [securityGroupName] },
             ]
-        }).promise().catch(handleError);
+        }).promise().catch(this.#handleError);
+        Logger.info(`Describe security group : ${securityGroupName}, from VPC : ${vpcName}`);
+        return result.SecurityGroups;
+    }
 
+    async #describeWithVpc(vpcName) {
+        const vpcId = await new VpcHelper().describe(vpcName).then(vpc => vpc.VpcId);
+        const result = await ec2.describeSecurityGroups({
+            Filters: [
+                { Name: 'vpc-id', Values: [vpcId] },
+            ]
+        }).promise().catch(this.#handleError);
         Logger.info(`Describe security groups from VPC : ${vpcName}`);
         return result.SecurityGroups;
+    }
+
+    #handleError(error) {
+        Logger.error(error.message);
+        throw error;
     }
 };

@@ -51,11 +51,25 @@ describe("SecurityGroupHelper", () => {
         );
         expect(actualSecurityGroup.GroupName).toBe(securityGroupName);
         expect(actualSecurityGroup.Description).toBe(securityGroupDescription);
-        expect(actualSecurityGroup.IpPermissions.length).toBeGreaterThan(0);
-        expect(actualSecurityGroup.IpPermissionsEgress.length).toBeGreaterThan(
-            0
-        );
+        expect(actualSecurityGroup.IpPermissions.length).toBeDefined();
+        expect(actualSecurityGroup.IpPermissionsEgress.length).toBeDefined();
     });
+
+    test("describe_WithOnlyVpcName_Success", async () => {
+        // Given
+        const vpcName = "vpc-deliver";
+
+        // When
+        const securityGroups = await securityGroup.describe(vpcName);
+
+        // Then
+        securityGroups.forEach((sg) => {
+            expect(sg.GroupName).toBeDefined();
+            expect(sg.Description).toBeDefined();
+            expect(sg.IpPermissions).toBeDefined();
+            expect(sg.IpPermissionsEgress).toBeDefined();
+        });
+    })
 
     test("describe_NonExistingSecurityGroupName_Success", async () => {
         // Given
