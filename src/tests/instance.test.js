@@ -1,12 +1,16 @@
+const VpcHelper = require("../VpcHelper.js");
 const InstanceHelper = require("../InstanceHelper.js");
 const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
 
 describe("Instance", () => {
-    let instance;
+    let vpc;
+    let givenVpcId;
     let givenInstanceName;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         instance = new InstanceHelper();
+        vpc = new VpcHelper();
+        givenVpcId = await vpc.describe("vpc-paris").then((result) => result.VpcId);
         givenInstanceName = "";
     });
 
@@ -17,20 +21,22 @@ describe("Instance", () => {
         const expectedInstancePlatform = "Linux/UNIX";
 
         // When
-        const result = await instance.describe(givenInstanceName);
+        const result = await instance.describe(givenVpcId).then((result) => {
+            return result.filter((instance) => instance.Tags.find((tag) => tag.Key === "Name" && tag.Value === givenInstanceName))[0];
+        });
 
         // Then
-        expect(result.Tags[0].Value).toEqual(givenInstanceName);
+        expect(result.Tags.find((tag) => tag.Key === "Name").Value).toEqual(givenInstanceName);
         expect(result.KeyName).toEqual(expectedInstanceKeyName);
         expect(result.PlatformDetails).toEqual(expectedInstancePlatform);
     });
 
     test("describe_NonExistingInstance_ThrowsException", async () => {
         // Given
-        givenInstanceName = "non-existing-instance";
+        givenVpcId = "non-existing-instance";
 
         // When
-        await expect(instance.describe(givenInstanceName)).rejects.toThrow(
+        await expect(instance.describe(givenVpcId)).rejects.toThrow(
             InstanceNotFoundException
         );
 

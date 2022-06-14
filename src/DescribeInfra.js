@@ -20,7 +20,7 @@ module.exports = class DescribeInfra {
         const vpc = await new VpcHelper().describe(name);
         const subnets = await subnetHelper.describe(name);
         // const securityGroups = await new SecurityGroupHelper().describe(vpc.VpcId);
-        // const instances = await new InstanceHelper().describe(vpc.VpcId);
+        const instances = await new InstanceHelper().describe(vpc.VpcId);
         // const keypairs = await new KeypairHelper().describe(vpc.VpcId);
 
         const result = {
@@ -35,7 +35,27 @@ module.exports = class DescribeInfra {
                     routeTables: subnetHelper.routeTables(subnet),
                 };
             }),
+            securityGroups: {},
+            instances: instances.map((instance) => {
+                return {
+                    instanceName: instance.Tags.find((tag) => tag.Key === "Name").Value,
+                    instancePublicIp: "",
+                    instancePrivateIp: instance.PrivateIpAddress,
+                    instanceType: instance.InstanceType,
+                    plateform: instance.PlatformDetails,
+                    amiId: instance.ImageId,
+                    terminationProtection: "",
+                    usageOperation: instance.UsageOperation,
+                    SecurityGroupsName: instance.SecurityGroups.map(
+                        (securityGroup) => {
+                            return securityGroup.GroupName;
+                        }
+                    ),
+                    keyName: instance.KeyName,
+                };
+            }),
         };
+
         return JSON.stringify(result);
     }
 
