@@ -3,14 +3,12 @@ const InstanceHelper = require("../InstanceHelper.js");
 const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
 
 describe("Instance", () => {
-    let vpc;
     let givenVpcId;
     let givenInstanceName;
 
     beforeEach(async () => {
         instance = new InstanceHelper();
-        vpc = new VpcHelper();
-        givenVpcId = await vpc.describe("vpc-paris").then((result) => result.VpcId);
+        givenVpcId = await new VpcHelper().describe("vpc-paris").then((result) => result.VpcId);
         givenInstanceName = "";
     });
 
