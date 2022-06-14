@@ -16,7 +16,6 @@ module.exports = class InstanceHelper {
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     async exists(name) {
-        // function always return empty array even if instance does not exist
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;

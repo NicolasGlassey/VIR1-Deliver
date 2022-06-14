@@ -15,28 +15,18 @@ module.exports = class KeyPairHelper {
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
     async exists(name) {
-        let params = {};
-        params["KeyNames"] = [name];
-
         const handleError = (err) => {
             Logger.error(err.message);
-            if (err.code === KEY_PAIR_NOT_FOUND) {
-                return false;
-            }
             throw err;
         };
 
         const result = await ec2
-            .describeKeyPairs(params)
+            .describeKeyPairs({ Filters: [{ Name: "key-name", Values: [name] }] })
             .promise()
             .catch(handleError);
 
         Logger.info(`Describe Keypair ${name} to check if it exists`);
-        if (result) {
-            return result.KeyPairs.length !== 0;
-        } else {
-            return false;
-        }
+        return result.KeyPairs.length !== 0;
     }
 
     /**
@@ -47,9 +37,6 @@ module.exports = class KeyPairHelper {
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
      */
     async describe(name) {
-        let params = {};
-        params["KeyNames"] = [name];
-
         const handleError = (err) => {
             Logger.error(err.message);
             if (err.code === KEY_PAIR_NOT_FOUND) {
@@ -59,7 +46,7 @@ module.exports = class KeyPairHelper {
         };
 
         const keys = await ec2
-            .describeKeyPairs(params)
+            .describeKeyPairs({ KeyNames: [name] })
             .promise()
             .catch(handleError);
         const key = keys.KeyPairs[0];
