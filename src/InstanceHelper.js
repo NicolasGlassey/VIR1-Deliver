@@ -4,8 +4,6 @@ const AWS = require("aws-sdk");
 const ec2 = new AWS.EC2({ region: "eu-west-3" });
 const { Logger } = require("vir1-core");
 
-const InstanceNotFoundException = require("./exceptions/instance/InstanceNotFoundException.js");
-
 module.exports = class InstanceHelper {
     //region public methods
 
@@ -35,8 +33,7 @@ module.exports = class InstanceHelper {
     /**
      * @brief Fetch an instance from a VPC id
      * @param vpcId {string} id of a VPC
-     * @returns {Promise<AWS.EC2.Instance>}
-     * @exception InstanceNotFound is thrown if the there is no instance with that name
+     * @returns {Promise<AWS.EC2.Instance>} Instances of the given VPC
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     async describe(vpcId) {
@@ -52,14 +49,8 @@ module.exports = class InstanceHelper {
             .promise()
             .catch(handleError);
 
-        const reservations = result.Reservations;
-        if (reservations.length === 0) {
-            throw new InstanceNotFoundException();
-        }
-
-        Logger.info(`Describe instance ${vpcId}`);
-        return reservations.map((reservation) => reservation.Instances[0]);
-        // return reservations[0].Instances[0];
+        Logger.info(`Describe instance of vpc ${vpcId}`);
+        return result.Reservations.map((reservation) => reservation.Instances[0]);
     }
 
     //endregion public methods

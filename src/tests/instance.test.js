@@ -1,6 +1,5 @@
 const VpcHelper = require("../VpcHelper.js");
 const InstanceHelper = require("../InstanceHelper.js");
-const InstanceNotFoundException = require("../exceptions/instance/InstanceNotFoundException.js");
 
 describe("Instance", () => {
     let givenVpcId;
@@ -27,19 +26,6 @@ describe("Instance", () => {
         expect(result.Tags.find((tag) => tag.Key === "Name").Value).toEqual(givenInstanceName);
         expect(result.KeyName).toEqual(expectedInstanceKeyName);
         expect(result.PlatformDetails).toEqual(expectedInstancePlatform);
-    });
-
-    test("describe_NonExistingInstance_ThrowsException", async () => {
-        // Given
-        givenVpcId = "non-existing-instance";
-
-        // When
-        await expect(instance.describe(givenVpcId)).rejects.toThrow(
-            InstanceNotFoundException
-        );
-
-        // Then
-        // Exception is thrown
     });
 
     test("exists_ExistingInstance_Success", async () => {
