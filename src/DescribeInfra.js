@@ -26,16 +26,16 @@ module.exports = class DescribeInfra {
         const result = {
             vpcName: vpc.Name,
             vpcCidr: vpc.CidrBlock,
-            igwName: vpc.Igw.Name,
-            subnets: subnets.map((subnet) => {
+            igwName: vpc.Igw?.Name,
+            subnets: await Promise.all(subnets.map(async (subnet) => {
                 return {
                     subnetName: subnet.Tags.find((tag) => tag.Key === "Name")
                         .Value,
                     subnetCidr: subnet.CidrBlock,
                     availabilityZone: subnet.AvailabilityZone,
-                    routeTables: subnetHelper.routeTables(subnet),
+                    routeTables: await subnetHelper.routeTables(subnet),
                 };
-            }),
+            })),
             securityGroups: securityGroups.map((securityGroup) => {
                 return {
                     securityGroupName: securityGroup.GroupName,
