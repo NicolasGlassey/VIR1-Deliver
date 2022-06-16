@@ -33,7 +33,7 @@ module.exports = class InstanceHelper {
     /**
      * @brief Fetch an instance from a VPC id
      * @param vpcId {string} id of a VPC
-     * @returns {Promise<AWS.EC2.Instance>} Instances of the given VPC
+     * @returns {Promise<AWS.EC2.InstanceList>} Instances of the given VPC
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     async describe(vpcId) {
