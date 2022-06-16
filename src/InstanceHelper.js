@@ -10,7 +10,7 @@ module.exports = class InstanceHelper {
     /**
      * @brief Check if the given name exists from the AWS EC2 SDK
      * @param name {string} name of an Instance
-     * @returns {boolean} true if the Instance exists, false otherwise
+     * @returns {Promise<boolean>} true if the Instance exists, false otherwise
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
     async exists(name) {

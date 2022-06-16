@@ -5,6 +5,8 @@ const ec2 = new AWS.EC2({ region: "eu-west-3" });
 const { Logger } = require("vir1-core");
 
 module.exports = class KeyPairHelper {
+    //region public methods
+
     /**
      * @brief Check if the given name exists from the AWS EC2 SDK
      * @param name {string} name of a KeyPair
@@ -29,8 +31,8 @@ module.exports = class KeyPairHelper {
     }
 
     /**
-     * @brief Fetch a keypairs
-     * @returns {Promise<EC2.KeyPairList>} KeyPairs
+     * @brief Fetch all key pairs
+     * @returns {Promise<AWS.EC2.KeyPairList>} KeyPairs
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property
      */
     async describe() {
@@ -41,7 +43,9 @@ module.exports = class KeyPairHelper {
 
         const result = await ec2.describeKeyPairs().promise().catch(handleError);
 
-        Logger.info(`Describe Keypair ${result}`);
+        Logger.info(`Describe key pairs`);
         return result.KeyPairs;
     }
+
+    //endregion
 };

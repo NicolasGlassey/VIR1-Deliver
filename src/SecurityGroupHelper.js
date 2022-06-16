@@ -6,6 +6,8 @@ const VpcHelper = require('./VpcHelper');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 
 module.exports = class SecurityGroupHelper {
+    //region public methods
+
     /**
      * @brief Check if a security group exists.
      * @param securityGroupName The name of the security group.
@@ -42,6 +44,10 @@ module.exports = class SecurityGroupHelper {
         return securityGroups;
     }
 
+    //endregion
+
+    //region private methods
+
     async #describeWithVpcAndSecurityGroup(vpcName, securityGroupName) {
         const vpcId = await new VpcHelper().describe(vpcName).then(vpc => vpc.VpcId);
         const result = await ec2.describeSecurityGroups({
@@ -52,13 +58,7 @@ module.exports = class SecurityGroupHelper {
         }).promise().catch(this.#handleError);
 
         Logger.info(`Describe security group : ${securityGroupName}, from VPC : ${vpcName}`);
-
         return result.SecurityGroups;
-    }
-
-    async inboundSecurityRules(securityGroupName) {
-        const securityGroup = await this.describe(securityGroupName);
-        return securityGroup.InboundSecurityRules;
     }
 
     async #describeWithVpc(vpcName) {
@@ -68,7 +68,6 @@ module.exports = class SecurityGroupHelper {
                                 .catch(this.#handleError);
 
         Logger.info(`Describe security groups from VPC : ${vpcName}`);
-
         return result.SecurityGroups;
     }
 
@@ -94,10 +93,14 @@ module.exports = class SecurityGroupHelper {
                 ? securityGroup.OutboundSecurityRules.push(inboundSecurityRule)
                 : securityGroup.InboundSecurityRules.push(inboundSecurityRule);
         })
+
+        Logger.info(`Set security group rules to security group : ${securityGroup.GroupName}`);
     }
 
     #handleError(error) {
         Logger.error(error.message);
         throw error;
     }
+
+    //endregion
 };

@@ -5,6 +5,7 @@ const SubnetHelper = require("./SubnetHelper");
 const SecurityGroupHelper = require("./SecurityGroupHelper");
 const InstanceHelper = require("./InstanceHelper");
 const KeypairHelper = require("./KeypairHelper");
+const { Logger } = require("vir1-core");
 
 module.exports = class DescribeInfra {
     //region public methods
@@ -41,8 +42,13 @@ module.exports = class DescribeInfra {
             instances: instancesMapped,
         });
 
+        Logger.info(`Describe Infrastructure of VPC ${name}`);
         return JSON.stringify(infra, null, 4);
     }
+
+    //endregion public methods
+
+    //region private methods
 
     async #mapSubnet(subnet, subnetHelper) {
         return {
@@ -95,5 +101,5 @@ module.exports = class DescribeInfra {
         return newObjOrArray;
     }
 
-    //endregion public methods
+    //endregion
 };

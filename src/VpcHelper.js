@@ -53,7 +53,7 @@ module.exports = class VpcHelper {
 
         let vpc = result.Vpcs[0];
         vpc.Name = vpc.Tags.find((tag) => tag.Key === "Name").Value;
-        vpc.Igw = await this.getInternetGateway(vpc.VpcId);
+        vpc.Igw = await this.#getInternetGateway(vpc.VpcId);
 
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
@@ -62,7 +62,8 @@ module.exports = class VpcHelper {
     //endregion public methods
 
     //region private methods
-    async getInternetGateway(vpcId) {
+
+    async #getInternetGateway(vpcId) {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
@@ -76,8 +77,9 @@ module.exports = class VpcHelper {
         const igw = result.InternetGateways[0];
         if (igw) igw.Name = igw.Tags.find((tag) => tag.Key === "Name").Value;
 
-
+        Logger.info(`Describe InternetGateway of Vpc ${vpcId}`);
         return igw;
     }
+
     //endregion private methods
 };

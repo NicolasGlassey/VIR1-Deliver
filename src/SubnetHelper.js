@@ -25,6 +25,12 @@ module.exports = class SubnetHelper {
         return result.Subnets;
     }
 
+    /**
+     * @brief Fetches the route tables of a given subnet from the AWS EC2 SDK
+     * @param subnet {AWS.EC2.Subnet} The subnet
+     * @returns {Promise<AWS.EC2.RouteTableList>}
+     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeRouteTables-property
+     */
     async routeTables(subnet) {
         const result = await ec2
             .describeRouteTables({
