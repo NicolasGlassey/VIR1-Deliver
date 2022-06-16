@@ -23,7 +23,7 @@ module.exports = class DescribeInfra {
         const keyPairs = await new KeypairHelper().describe();
         const instances = await new InstanceHelper().describe(vpc.VpcId);
 
-        const result = {
+        let result = {
             vpcName: vpc.Name,
             vpcCidr: vpc.CidrBlock,
             igwName: vpc.Igw?.Name,
@@ -69,7 +69,19 @@ module.exports = class DescribeInfra {
             }),
         };
 
-        return JSON.stringify(result, null, 4);
+        return JSON.stringify(this.#lowerKeysFirstCharRecursive(result), null, 4);
+    }
+
+    #lowerKeysFirstCharRecursive(obj) {
+        if (obj === null || typeof obj !== "object") return obj;
+
+        let newObjOrArray = Array.isArray(obj) ? [] : {};
+        for (const key in obj) {
+            const newKey = key.charAt(0).toLowerCase() + key.slice(1);
+            newObjOrArray[newKey] = this.#lowerKeysFirstCharRecursive(obj[key]);
+        }
+
+        return newObjOrArray;
     }
 
     //endregion public methods
