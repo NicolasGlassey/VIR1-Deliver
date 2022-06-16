@@ -45,7 +45,7 @@ module.exports = class DescribeInfra {
             instances: instances.map((instance) => {
                 return {
                     instanceName: instance.Tags.find((tag) => tag.Key === "Name").Value,
-                    instancePublicIp: "",
+                    instancePublicIp: instance.PublicIpAddress || "",
                     instancePrivateIp: instance.PrivateIpAddress,
                     instanceType: instance.InstanceType,
                     plateform: instance.PlatformDetails,
