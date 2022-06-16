@@ -32,9 +32,14 @@ module.exports = class SecurityGroup {
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSecurityGroups-property
      */
     async describe(vpcName, securityGroupName = '') {
-        return securityGroupName
+        const securityGroups = securityGroupName
             ? await this.#describeWithVpcAndSecurityGroup(vpcName, securityGroupName)
             : await this.#describeWithVpc(vpcName);
+
+        for (const securityGroup of securityGroups)
+            await this.#setSecurityGroupRules(securityGroup);
+
+        return securityGroups;
     }
 
     async #describeWithVpcAndSecurityGroup(vpcName, securityGroupName) {
@@ -45,19 +50,45 @@ module.exports = class SecurityGroup {
                 { Name: 'group-name', Values: [securityGroupName] },
             ]
         }).promise().catch(this.#handleError);
+
         Logger.info(`Describe security group : ${securityGroupName}, from VPC : ${vpcName}`);
+
         return result.SecurityGroups;
     }
 
     async #describeWithVpc(vpcName) {
         const vpcId = await new VpcHelper().describe(vpcName).then(vpc => vpc.VpcId);
-        const result = await ec2.describeSecurityGroups({
-            Filters: [
-                { Name: 'vpc-id', Values: [vpcId] },
-            ]
-        }).promise().catch(this.#handleError);
+        const result = await ec2.describeSecurityGroups({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] })
+                                .promise()
+                                .catch(this.#handleError);
+
         Logger.info(`Describe security groups from VPC : ${vpcName}`);
+
         return result.SecurityGroups;
+    }
+
+    async #setSecurityGroupRules(securityGroup) {
+        const result = await ec2.describeSecurityGroupRules({
+            Filters: [{ Name: 'group-id', Values: [securityGroup.GroupId] }]
+        }).promise().catch(this.#handleError);
+
+        securityGroup.InboundSecurityRules = securityGroup.InboundSecurityRules ?? [];
+        securityGroup.OutboundSecurityRules = securityGroup.OutboundSecurityRules ?? [];
+        result.SecurityGroupRules.forEach(rule => {
+            let portRange = (rule.FromPort !== rule.ToPort) ? `${rule.FromPort} - ${rule.ToPort}` : rule.FromPort;
+            const inboundSecurityRule = {
+                RuleName: rule.Tags.find(tag => tag?.Key === 'Name')?.Value,
+                Type: rule.ToPort,
+                Protocole: rule.IpProtocol,
+                PortRange: portRange,
+                Source: rule.GroupId,
+                Description: rule.Description
+            };
+
+            rule.IsEgress
+                ? securityGroup.OutboundSecurityRules.push(inboundSecurityRule)
+                : securityGroup.InboundSecurityRules.push(inboundSecurityRule);
+        })
     }
 
     #handleError(error) {

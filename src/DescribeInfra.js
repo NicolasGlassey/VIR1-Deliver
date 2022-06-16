@@ -12,15 +12,15 @@ module.exports = class DescribeInfra {
     /**
      * @brief Describe the infrastructure
      * @param name {string} name of a VPC
-     * @returns JSON
+     * @returns Promise<string>
      */
     async describe(name) {
         const subnetHelper = new SubnetHelper();
 
         const vpc = await new VpcHelper().describe(name);
         const subnets = await subnetHelper.describe(name);
-        // const securityGroups = await new SecurityGroupHelper().describe(vpc.VpcId);
-        const keypairs = await new KeypairHelper().describe(vpc.VpcId);
+        const securityGroups = await new SecurityGroupHelper().describe(vpc.Name);
+        const keyPairs = await new KeypairHelper().describe();
         const instances = await new InstanceHelper().describe(vpc.VpcId);
 
         const result = {
@@ -36,8 +36,14 @@ module.exports = class DescribeInfra {
                     routeTables: subnetHelper.routeTables(subnet),
                 };
             }),
-            securityGroups: {},
-            keyPairs: keypairs.map((keypair) => {
+            securityGroups: securityGroups.map((securityGroup) => {
+                return {
+                    securityGroupName: securityGroup.GroupName,
+                    inboundSecurityRules: securityGroup.InboundSecurityRules,
+                    outboundSecurityRules: securityGroup.OutboundSecurityRules,
+                };
+            }),
+            keyPairs: keyPairs.map((keypair) => {
                 return {
                     keyPairsName: keypair.KeyName,
                     type: keypair.KeyType,
@@ -63,7 +69,7 @@ module.exports = class DescribeInfra {
             }),
         };
 
-        return JSON.stringify(result);
+        return JSON.stringify(result, null, 4);
     }
 
     //endregion public methods

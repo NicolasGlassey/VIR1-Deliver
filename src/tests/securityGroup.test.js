@@ -53,6 +53,8 @@ describe("SecurityGroupHelper", () => {
         expect(actualSecurityGroup.Description).toBe(securityGroupDescription);
         expect(actualSecurityGroup.IpPermissions.length).toBeDefined();
         expect(actualSecurityGroup.IpPermissionsEgress.length).toBeDefined();
+        expect(actualSecurityGroup.InboundSecurityRules).toBeDefined()
+        expect(actualSecurityGroup.OutboundSecurityRules).toBeDefined()
     });
 
     test("describe_WithOnlyVpcName_Success", async () => {
@@ -68,6 +70,8 @@ describe("SecurityGroupHelper", () => {
             expect(sg.Description).toBeDefined();
             expect(sg.IpPermissions).toBeDefined();
             expect(sg.IpPermissionsEgress).toBeDefined();
+            expect(sg.InboundSecurityRules).toBeDefined();
+            expect(sg.OutboundSecurityRules).toBeDefined();
         });
     })
 
