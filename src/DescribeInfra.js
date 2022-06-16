@@ -26,6 +26,7 @@ module.exports = class DescribeInfra {
         const result = {
             vpcName: vpc.Name,
             vpcCidr: vpc.CidrBlock,
+            igwName: vpc.Igw.Name,
             subnets: subnets.map((subnet) => {
                 return {
                     subnetName: subnet.Tags.find((tag) => tag.Key === "Name")

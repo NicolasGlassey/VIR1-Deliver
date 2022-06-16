@@ -53,10 +53,30 @@ module.exports = class VpcHelper {
 
         let vpc = result.Vpcs[0];
         vpc.Name = vpc.Tags.find((tag) => tag.Key === "Name").Value;
+        vpc.Igw = await this.getInternetGateway(vpc.VpcId);
 
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
     }
 
     //endregion public methods
+
+    //region private methods
+    async getInternetGateway(vpcId) {
+        const handleError = (err) => {
+            Logger.error(err.message);
+            throw err;
+        }
+
+        const result = await ec2
+            .describeInternetGateways({ Filters: [{ Name: "attachment.vpc-id", Values: [vpcId] }] })
+            .promise()
+            .catch(handleError);
+
+        const igw = result.InternetGateways[0];
+        igw.Name = igw.Tags.find((tag) => tag.Key === "Name").Value;
+
+        return igw;
+    }
+    //endregion private methods
 };
