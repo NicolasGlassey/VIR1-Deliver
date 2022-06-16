@@ -7,52 +7,63 @@ Class diagram
 Authors
     Yannick Baudraz
     Armand Marechal
-Date : 2022-06-09
+Date : 2022-06-16
 end note
 
 class Infra as "DescribeInfra" #aliceblue {
-    +Constructor(awsClient : AwsCloudCLientImpl)
+    +constructor(awsClient : AwsCloudClientImpl)
     +describe(vpcName : String) : string
 }
 
 class Credentials #aliceblue {
-    +Constructor(awsClient : AwsCloudCLientImpl)
-    +describe(instanceName : String) : object
+    +constructor(awsClient : AwsCloudClientImpl)
+    +describe(instanceName : String) : object[]
 }
 
 class VpcHelper {
-    +Constructor(awsClient : AwsCloudCLientImpl)
+    +constructor(awsClient : AwsCloudClientImpl)
     +exists(vpcName : string) : boolean
     +describe(vpcName : String) : object
 }
 
 class SubnetHelper {
-    +Constructor(awsClient : AwsCloudCLientImpl)
+    +constructor(awsClient : AwsCloudClientImpl)
     +exists(vpcName : string) : boolean
-    +describe(vpcName : String) : object
+    +describe(vpcName : String) : object[]
 }
 
 class SecurityGroupHelper {
-    +Constructor(awsClient : AwsCloudCLientImpl)
+    +constructor(awsClient : AwsCloudClientImpl)
     +exists(securityGroupName : string) : boolean
-    +describe(vpcName : String) : object
+    +describe(vpcName : String) : object[]
 }
 
 class InstanceHelper {
-    +Constructor(awsClient : AwsCloudCLientImpl)
+    +constructor(awsClient : AwsCloudClientImpl)
     +exists(instanceName : string) : boolean
-    +describe(instanceName : String) : object
+    +describe(instanceName : String) : object[]
 }
 
 class KeyPairHelper {
-    +Constructor(awsClient : AwsCloudCLientImpl)
+    +constructor(awsClient : AwsCloudClientImpl)
     +exists(instanceName : string) : boolean
-    +describe(instanceName : String) : object
+    +describe(instanceName : String) : object[]
 }
 
 class WindowsPasswordHelper {
-    +Constructor(awsClient : AwsCloudCLientImpl)
-    +describe(instanceName : String) : object
+    +constructor(awsClient : AwsCloudClientImpl)
+    +describe(instanceName : String) : object[]
+}
+
+package core {
+    interface ICloudClient {
+        +describe(vpcName : String) : string
+    }
+
+    class AwsCloudClientImpl implements ICloudClient {
+        +constructor()
+        +describe(vpcName : String) : string
+    }
 }
 
 together {
@@ -62,9 +73,10 @@ together {
     class InstanceException
     class InstanceNotFoundException
     class UnavailableInstancePasswordsException
-    class KeyPairException
-    class KeyPairNotFoundException
 }
+
+AwsCloudClientImpl *-- Infra
+AwsCloudClientImpl *-- Credentials
 
 Infra ..> VpcHelper
 Infra ..> SubnetHelper
@@ -80,8 +92,6 @@ VpcNotFoundException --|> VpcException
 InstanceException --|> Error
 InstanceNotFoundException --|> InstanceException
 UnavailableInstancePasswordsException --|> InstanceException
-KeyPairException --|> Error
-KeyPairNotFoundException --|> KeyPairException
 
 SubnetHelper ..> VpcHelper
 SecurityGroupHelper ..> VpcHelper
@@ -89,7 +99,6 @@ WindowsPasswordHelper ..> InstanceHelper
 
 VpcHelper ..> VpcNotFoundException
 InstanceHelper ..> InstanceNotFoundException
-KeyPairHelper ..> KeyPairNotFoundException
 WindowsPasswordHelper ..> InstanceNotFoundException
 WindowsPasswordHelper ..> UnavailableInstancePasswordsException
 
