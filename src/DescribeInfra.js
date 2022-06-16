@@ -20,8 +20,8 @@ module.exports = class DescribeInfra {
         const vpc = await new VpcHelper().describe(name);
         const subnets = await subnetHelper.describe(name);
         // const securityGroups = await new SecurityGroupHelper().describe(vpc.VpcId);
+        const keypairs = await new KeypairHelper().describe(vpc.VpcId);
         const instances = await new InstanceHelper().describe(vpc.VpcId);
-        // const keypairs = await new KeypairHelper().describe(vpc.VpcId);
 
         const result = {
             vpcName: vpc.Name,
@@ -36,6 +36,12 @@ module.exports = class DescribeInfra {
                 };
             }),
             securityGroups: {},
+            keyPairs: keypairs.map((keypair) => {
+                return {
+                    keyPairsName: keypair.KeyName,
+                    type: keypair.KeyType,
+                };
+            }),
             instances: instances.map((instance) => {
                 return {
                     instanceName: instance.Tags.find((tag) => tag.Key === "Name").Value,
