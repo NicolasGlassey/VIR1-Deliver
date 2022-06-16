@@ -5,7 +5,7 @@ const { Logger } = require("vir1-core");
 const VpcHelper = require('./VpcHelper');
 const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 
-module.exports = class SecurityGroup {
+module.exports = class SecurityGroupHelper {
     /**
      * @brief Check if a security group exists.
      * @param securityGroupName The name of the security group.
@@ -54,6 +54,11 @@ module.exports = class SecurityGroup {
         Logger.info(`Describe security group : ${securityGroupName}, from VPC : ${vpcName}`);
 
         return result.SecurityGroups;
+    }
+
+    async inboundSecurityRules(securityGroupName) {
+        const securityGroup = await this.describe(securityGroupName);
+        return securityGroup.InboundSecurityRules;
     }
 
     async #describeWithVpc(vpcName) {
