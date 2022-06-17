@@ -8,9 +8,13 @@ const WindowsPasswordHelper = require("./WindowsPasswordHelper");
 module.exports = class Credentials {
     //region private fields
 
-    #outputDir = 'output';
+    #outputDir;
 
     //endregion
+
+    constructor(outputDir) {
+        this.#outputDir = outputDir;
+    }
 
     //region public methods
 
