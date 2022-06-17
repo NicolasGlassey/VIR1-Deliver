@@ -41,7 +41,7 @@ module.exports = class KeyPairHelper {
             throw err;
         };
 
-        const result = await ec2.describeKeyPairs().promise().catch(handleError);
+        const result = await ec2.describeKeyPairs({ IncludePublicKey: true }).promise().catch(handleError);
 
         Logger.info(`Describe key pairs`);
         return result.KeyPairs;
