@@ -6,7 +6,11 @@ const Credentials = require("../Credentials");
 
 describe('Credentials', () => {
     let credentials;
-    const outputDir = path.join(__dirname, 'output');
+    let outputDir;
+
+    beforeAll(() => {
+        outputDir = path.join(__dirname, 'output')
+    });
 
     beforeEach(() => {
         deleteOutputDir();
@@ -23,7 +27,8 @@ describe('Credentials', () => {
 
         // Then
         fs.readdirSync(outputDir).forEach(file => {
-            expect(file.length).toBeGreaterThan(0);
+            const content = fs.readFileSync(path.join(outputDir, file));
+            expect(content.length).toBeGreaterThan(0);
         });
     });
 
@@ -36,7 +41,8 @@ describe('Credentials', () => {
 
         // Then
         fs.readdirSync(outputDir).forEach(file => {
-            expect(file.length).toBeGreaterThan(0);
+            const content = fs.readFileSync(path.join(outputDir, file));
+            expect(content.length).toBeGreaterThan(0);
         });
     });
 
@@ -47,6 +53,6 @@ describe('Credentials', () => {
     function deleteOutputDir() {
         if (!fs.existsSync(outputDir)) return;
 
-        fs.rmdirSync(outputDir, { recursive: true });
+        fs.rmSync(outputDir, { recursive: true, force: true });
     }
 });
