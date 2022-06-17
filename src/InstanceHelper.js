@@ -54,25 +54,21 @@ module.exports = class InstanceHelper {
     }
 
     /**
-     * @brief Fetch an instance by its name
-     * @param name {string} name of an Instance
-     * @returns {Promise<AWS.EC2.Instance>}
+     * @brief Fetch all Windows instances from the AWS EC2 SDK
+     * @returns {Promise<AWS.EC2.InstanceList>}
      */
-    async describeWithName(name) {
+    async describeWindowsInstances() {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
         };
 
-        const result = await ec2
-            .describeInstances({
-                Filters: [{ Name: "tag:Name", Values: [name] }],
-            })
-            .promise()
-            .catch(handleError);
+        const result = await ec2.describeInstances({ Filters: [{ Name: "platform", Values: ['windows'] }] })
+                                .promise()
+                                .catch(handleError);
 
-        Logger.info(`Describe instance ${name}`);
-        return result.Reservations.map((reservation) => reservation.Instances[0])[0];
+        Logger.info(`Describe windows instances`);
+        return result.Reservations.map((reservation) => reservation.Instances[0]);
     }
 
     //endregion public methods
