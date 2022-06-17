@@ -20,13 +20,8 @@ module.exports = class Credentials {
      */
     async describeLinuxSshKeys() {
         const keyPairs = await new KeyPairHelper().describe();
-
         this.#createOutputDirIfNotExists();
-
-        keyPairs.forEach(keyPair => {
-            if (keyPair.PublicKey)
-                fs.writeFileSync(path.join(this.#outputDir, keyPair.KeyPairId), keyPair.PublicKey);
-        })
+        this.#writeKeyPairsInFiles(keyPairs);
     }
 
     /**
@@ -35,13 +30,8 @@ module.exports = class Credentials {
      */
     async describeWindowsPasswords() {
         const passwords = await new WindowsPasswordHelper().describe();
-
         this.#createOutputDirIfNotExists();
-
-        passwords.forEach(password => {
-            if (password.PasswordData)
-                fs.writeFileSync(path.join(this.#outputDir, password.InstanceId), password.PasswordData);
-        })
+        this.#writePasswordsInFiles(passwords);
     }
 
     //endregion
@@ -51,6 +41,20 @@ module.exports = class Credentials {
     #createOutputDirIfNotExists() {
         if (!fs.existsSync(this.#outputDir))
             fs.mkdirSync(this.#outputDir);
+    }
+
+    #writeKeyPairsInFiles(keyPairs) {
+        keyPairs.forEach(keyPair => {
+            if (keyPair.PublicKey)
+                fs.writeFileSync(path.join(this.#outputDir, keyPair.KeyPairId), keyPair.PublicKey);
+        })
+    }
+
+    #writePasswordsInFiles(passwords) {
+        passwords.forEach(password => {
+            if (password.PasswordData)
+                fs.writeFileSync(path.join(this.#outputDir, password.InstanceId), password.PasswordData);
+        })
     }
 
     //endregion
