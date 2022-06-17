@@ -53,5 +53,27 @@ module.exports = class InstanceHelper {
         return result.Reservations.map((reservation) => reservation.Instances[0]);
     }
 
+    /**
+     * @brief Fetch an instance by its name
+     * @param name {string} name of an Instance
+     * @returns {Promise<AWS.EC2.Instance>}
+     */
+    async describeWithName(name) {
+        const handleError = (err) => {
+            Logger.error(err.message);
+            throw err;
+        };
+
+        const result = await ec2
+            .describeInstances({
+                Filters: [{ Name: "tag:Name", Values: [name] }],
+            })
+            .promise()
+            .catch(handleError);
+
+        Logger.info(`Describe instance ${name}`);
+        return result.Reservations.map((reservation) => reservation.Instances[0])[0];
+    }
+
     //endregion public methods
 };

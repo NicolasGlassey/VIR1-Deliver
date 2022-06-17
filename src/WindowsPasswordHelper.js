@@ -25,7 +25,7 @@ module.exports = class WindowsPasswordHelper {
             throw err;
         };
 
-        const instanceId = await new InstanceHelper().describe(instanceName).then(instance => instance.InstanceId);
+        const instanceId = await new InstanceHelper().describeWithName(instanceName).then(instance => instance?.InstanceId ?? '');
         const passwordDataResult = await ec2.getPasswordData({ InstanceId: instanceId }).promise().catch(handleError);
 
         if (!passwordDataResult.PasswordData) {
