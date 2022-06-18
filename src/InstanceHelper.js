@@ -53,5 +53,23 @@ module.exports = class InstanceHelper {
         return result.Reservations.map((reservation) => reservation.Instances[0]);
     }
 
+    /**
+     * @brief Fetch all Windows instances from the AWS EC2 SDK
+     * @returns {Promise<AWS.EC2.InstanceList>}
+     */
+    async describeWindowsInstances() {
+        const handleError = (err) => {
+            Logger.error(err.message);
+            throw err;
+        };
+
+        const result = await ec2.describeInstances({ Filters: [{ Name: "platform", Values: ['windows'] }] })
+                                .promise()
+                                .catch(handleError);
+
+        Logger.info(`Describe windows instances`);
+        return result.Reservations.map((reservation) => reservation.Instances[0]);
+    }
+
     //endregion public methods
 };
