@@ -6,23 +6,24 @@ const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException");
 describe("DescribeInfra", () => {
     /** @type {DescribeInfra} */
     let describeInfra;
-    jest.setTimeout(30000);
+    let vpcName;
 
     beforeEach(() => {
         describeInfra = new DescribeInfra();
+        vpcName = "";
     });
 
     test('describe_AllInfra_Success', async () => {
         // Given
-        const vpcName = "vpc-paris";
+        vpcName = "vpc-paris";
         const expectedType = 'string';
 
         // When
         const infra = await describeInfra.describe(vpcName);
+        const infraJson = JSON.parse(infra);
 
         // Then
         expect(typeof infra).toBe(expectedType);
-        const infraJson = JSON.parse(infra);
         expect(infraJson.vpcName).toBe(vpcName);
         expect(infraJson.vpcCidr).toBeDefined();
         expect(infraJson.igwName).toBeDefined();
@@ -34,7 +35,7 @@ describe("DescribeInfra", () => {
 
     test('describe_NotExistingVpc_Success', async () => {
         // Given
-        const vpcName = "vpc-not-existing";
+        vpcName = "vpc-not-existing";
 
         // when
         await expect(describeInfra.describe(vpcName)).rejects.toThrow(VpcNotFoundException);
