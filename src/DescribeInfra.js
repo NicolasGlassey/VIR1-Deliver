@@ -16,13 +16,13 @@ module.exports = class DescribeInfra {
 
     /**
      * @brief Describe the infrastructure
-     * @param name {string} name of a VPC
+     * @param vpcName {string} vpcName of a VPC
      * @returns Promise<string>
      */
-    async describe(name) {
-        const vpc = await new VpcHelper(ec2).describe(name);
+    async describe(vpcName) {
+        const vpc = await new VpcHelper(ec2).describe(vpcName);
 
-        const subnets = await new SubnetHelper(ec2).describe(name);
+        const subnets = await new SubnetHelper(ec2).describe(vpcName);
         const subnetsMapped = subnets.map((this.#mapSubnet));
 
         const securityGroups = await new SecurityGroupHelper(ec2).describe(vpc.Name);
@@ -44,7 +44,7 @@ module.exports = class DescribeInfra {
             instances: instancesMapped,
         });
 
-        Logger.info(`Describe Infrastructure of VPC ${name}`);
+        Logger.info(`Describe Infrastructure of VPC ${vpcName}`);
         return JSON.stringify(infra, null, 4);
     }
 

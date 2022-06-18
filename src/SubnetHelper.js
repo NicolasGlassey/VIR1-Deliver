@@ -20,15 +20,15 @@ module.exports = class SubnetHelper {
 
     /**
      * @brief Fetches the Subnets of a given VPC from the AWS EC2 SDK
-     * @param vpc {string} name of a VPC
+     * @param vpcName {string} name of a VPC
      * @returns {Promise<Object[]>} Subnets of the given VPC
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSubnets-property
      */
-    async describe(vpc) {
-        const id = await new VpcHelper(this.#client).describe(vpc).then((vpc) => vpc.VpcId);
+    async describe(vpcName) {
+        const id = await new VpcHelper(this.#client).describe(vpcName).then((vpc) => vpc.VpcId);
         const result = await this.#client
-            .describeSubnets({ Filters: [{ Name: "vpc-id", Values: [id] }] })
-            .promise();
+                                 .describeSubnets({ Filters: [{ Name: "vpc-id", Values: [id] }] })
+                                 .promise();
 
         const subnets = result.Subnets;
         for (let subnet of subnets) {
@@ -36,25 +36,29 @@ module.exports = class SubnetHelper {
             await this.#setRouteTables(subnet);
         }
 
-        Logger.info(`Describe Subnets of VPC ${vpc}`);
+        Logger.info(`Describe Subnets of VPC ${vpcName}`);
         return subnets;
     }
 
+    //endregion public methods
+
+    //region private methods
+
     async #setRouteTables(subnet) {
         const result = await this.#client
-            .describeRouteTables({
-                Filters: [
-                    {
-                        Name: "association.subnet-id",
-                        Values: [subnet.SubnetId],
-                    },
-                ],
-            })
+                                 .describeRouteTables({
+                                     Filters: [
+                                         {
+                                             Name: "association.subnet-id",
+                                             Values: [subnet.SubnetId],
+                                         },
+                                     ],
+                                 })
             .promise();
 
         subnet.RouteTables = result.RouteTables;
         Logger.info(`Describe RouteTables of Subnet ${subnet.SubnetId}`);
     }
 
-    //endregion public methods
+    //endregion
 };

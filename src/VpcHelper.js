@@ -41,24 +41,24 @@ module.exports = class VpcHelper {
 
     /**
      * @brief Fetches the VPC with the given name from the AWS EC2 SDK
-     * @param name {string} name of a VPC
+     * @param vpcName {string} name of a VPC
      * @returns {Promise<AWS.EC2.Vpc>} VPC with the given name
      * @exception VpcNotFoundException is thrown if the there is no instance with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
-    async describe(name) {
+    async describe(vpcName) {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
         };
 
         const result = await this.#client
-            .describeVpcs({ Filters: [{ Name: "tag:Name", Values: [name] }] })
-            .promise()
-            .catch(handleError);
+                                 .describeVpcs({ Filters: [{ Name: "tag:Name", Values: [vpcName] }] })
+                                 .promise()
+                                 .catch(handleError);
 
         if (result.Vpcs.length === 0)
-            throw new VpcNotFoundException(`VPC with name ${name} not found`);
+            throw new VpcNotFoundException(`VPC with name ${vpcName} not found`);
 
         let vpc = result.Vpcs[0];
         vpc.Name = vpc.Tags.find((tag) => tag.Key === "Name").Value;

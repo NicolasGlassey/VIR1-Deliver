@@ -7,76 +7,80 @@ Class diagram
 Authors
     Yannick Baudraz
     Armand Marechal
-Date : 2022-06-16
+Date : 2022-06-18
 end note
 
-class Infra as "DescribeInfra" #aliceblue {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +describe(vpcName : String) : string
-}
+package deliver {
+    class Infra as "DescribeInfra" #aliceblue {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe(vpcName : String) : String
+    }
 
-class Credentials #aliceblue {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +describe(instanceName : String) : object[]
-}
+    class Credentials #aliceblue {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describeLinuxSshKeys() : void
+        +describeWindowsPasswords() : void
+    }
 
-class VpcHelper {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +exists(vpcName : string) : boolean
-    +describe(vpcName : String) : object
-}
+    class VpcHelper {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe(vpcName : String) : object
+    }
 
-class SubnetHelper {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +exists(vpcName : string) : boolean
-    +describe(vpcName : String) : object[]
-}
+    class SubnetHelper {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe(vpcName : String) : object[]
+    }
 
-class SecurityGroupHelper {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +exists(securityGroupName : string) : boolean
-    +describe(vpcName : String) : object[]
-}
+    class SecurityGroupHelper {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe(vpcName : String, securityGroupName = " " : String) : object[]
+    }
 
-class InstanceHelper {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +exists(instanceName : string) : boolean
-    +describe(instanceName : String) : object[]
-}
+    class InstanceHelper {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe(instanceName : String) : object[]
+        +describeWindowsInstances() : object[]
+    }
 
-class KeyPairHelper {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +exists(instanceName : string) : boolean
-    +describe(instanceName : String) : object[]
-}
+    class KeyPairHelper {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe() : object[]
+    }
 
-class WindowsPasswordHelper {
-    +constructor(awsClient : AwsCloudClientImpl)
-    +describe(instanceName : String) : object[]
+    class WindowsPasswordHelper {
+        +constructor(awsClient : AwsCloudClientImpl)
+        +describe() : object[]
+    }
+
+    together {
+        class Error
+        class VpcException
+        class VpcNotFoundException
+        class InstanceException
+        class InstanceNotFoundException
+    }
 }
 
 package core {
     interface ICloudClient {
-        +describe(vpcName : String) : string
+        +describe(vpcName : String) : String
     }
 
     class AwsCloudClientImpl implements ICloudClient {
         +constructor()
-        +describe(vpcName : String) : string
+        +describe(vpcName : String) : String
     }
-}
-
-together {
-    class Error
-    class VpcException
-    class VpcNotFoundException
-    class InstanceException
-    class InstanceNotFoundException
-    class UnavailableInstancePasswordsException
 }
 
 AwsCloudClientImpl *-- Infra
 AwsCloudClientImpl *-- Credentials
+AwsCloudClientImpl *-- VpcHelper
+AwsCloudClientImpl *-- SubnetHelper
+AwsCloudClientImpl *-- SecurityGroupHelper
+AwsCloudClientImpl *-- InstanceHelper
+AwsCloudClientImpl *-- KeyPairHelper
+AwsCloudClientImpl *-- WindowsPasswordHelper
 
 Infra ..> VpcHelper
 Infra ..> SubnetHelper
@@ -91,7 +95,6 @@ VpcException --|> Error
 VpcNotFoundException --|> VpcException
 InstanceException --|> Error
 InstanceNotFoundException --|> InstanceException
-UnavailableInstancePasswordsException --|> InstanceException
 
 SubnetHelper ..> VpcHelper
 SecurityGroupHelper ..> VpcHelper
@@ -99,7 +102,5 @@ WindowsPasswordHelper ..> InstanceHelper
 
 VpcHelper ..> VpcNotFoundException
 InstanceHelper ..> InstanceNotFoundException
-WindowsPasswordHelper ..> InstanceNotFoundException
-WindowsPasswordHelper ..> UnavailableInstancePasswordsException
 
 @enduml

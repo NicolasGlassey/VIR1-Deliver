@@ -1,30 +1,26 @@
 const AWS = require("aws-sdk");
 const ec2 = new AWS.EC2({ region: "eu-west-3" });
 
-const VpcHelper = require("../VpcHelper.js");
 const InstanceHelper = require("../InstanceHelper.js");
 
 describe("Instance", () => {
     let instance;
-    let givenVpcId;
     let givenInstanceName;
 
     beforeEach(async () => {
         instance = new InstanceHelper(ec2);
-        givenVpcId = await new VpcHelper(ec2)
-            .describe("vpc-paris")
-            .then((result) => result.VpcId);
         givenInstanceName = "";
     });
 
     test("describe_ExistingInstance_Success", async () => {
         // Given
         givenInstanceName = "debian";
+        const giveVpcName = "vpc-paris";
         const expectedInstanceKeyName = "test";
         const expectedInstancePlatform = "Linux/UNIX";
 
         // When
-        const result = await instance.describe(givenVpcId).then((result) => {
+        const result = await instance.describe(giveVpcName).then((result) => {
             return result.filter((instance) =>
                 instance.Tags.find(
                     (tag) =>

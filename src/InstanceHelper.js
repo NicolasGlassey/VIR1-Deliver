@@ -1,6 +1,7 @@
 "use strict";
 
 const { Logger } = require("vir1-core");
+const VpcHelper = require("./VpcHelper");
 
 module.exports = class InstanceHelper {
     //region private fields
@@ -10,9 +11,12 @@ module.exports = class InstanceHelper {
     //endregion
 
     // region constructor
+
     constructor(client) {
         this.#client = client;
     }
+
+    //endregion
 
     //region public methods
 
@@ -41,22 +45,23 @@ module.exports = class InstanceHelper {
 
     /**
      * @brief Fetch an instance from a VPC id
-     * @param vpcId {string} id of a VPC
+     * @param vpcName {string} NAme of a VPC
      * @returns {Promise<AWS.EC2.InstanceList>} Instances of the given VPC
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
      */
-    async describe(vpcId) {
+    async describe(vpcName) {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
         };
 
+        const vpcId = await new VpcHelper(this.#client).describe(vpcName).then(vpc => vpc.VpcId);
         const result = await this.#client
-            .describeInstances({
-                Filters: [{ Name: "vpc-id", Values: [vpcId] }],
-            })
-            .promise()
-            .catch(handleError);
+                                 .describeInstances({
+                                     Filters: [{ Name: "vpc-id", Values: [vpcId] }],
+                                 })
+                                 .promise()
+                                 .catch(handleError);
 
         Logger.info(`Describe instance of vpc ${vpcId}`);
         return result.Reservations.map(
