@@ -1,10 +1,20 @@
 "use strict";
 
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
 const { Logger } = require("vir1-core");
 
 module.exports = class KeyPairHelper {
+    //region private fields
+
+    #client;
+
+    //endregion
+
+    // region constructor
+    constructor(client) {
+        this.#client = client;
+    }
+    // endregion
+
     //region public methods
 
     /**
@@ -19,7 +29,7 @@ module.exports = class KeyPairHelper {
             throw err;
         };
 
-        const result = await ec2
+        const result = await this.#client
             .describeKeyPairs({
                 Filters: [{ Name: "key-name", Values: [name] }],
             })
@@ -41,7 +51,10 @@ module.exports = class KeyPairHelper {
             throw err;
         };
 
-        const result = await ec2.describeKeyPairs({ IncludePublicKey: true }).promise().catch(handleError);
+        const result = await this.#client
+            .describeKeyPairs({ IncludePublicKey: true })
+            .promise()
+            .catch(handleError);
 
         Logger.info(`Describe key pairs`);
         return result.KeyPairs;

@@ -1,3 +1,6 @@
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const VpcHelper = require("../VpcHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
@@ -6,7 +9,7 @@ describe("Vpc", () => {
     let givenVpcName;
 
     beforeEach(() => {
-        vpc = new VpcHelper();
+        vpc = new VpcHelper(ec2);
         givenVpcName = "";
     });
 

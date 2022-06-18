@@ -1,12 +1,21 @@
 "use strict";
 
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+const VpcHelper = require("./VpcHelper");
 const { Logger } = require("vir1-core");
 
-const VpcHelper = require("./VpcHelper");
-
 module.exports = class SubnetHelper {
+    //region private fields
+
+    #client;
+
+    //endregion
+
+    // region constructor
+    constructor(client) {
+        this.#client = client;
+    }
+    // endregion
+
     //region public methods
 
     /**
@@ -16,8 +25,8 @@ module.exports = class SubnetHelper {
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSubnets-property
      */
     async describe(vpc) {
-        const id = await new VpcHelper().describe(vpc).then((vpc) => vpc.VpcId);
-        const result = await ec2
+        const id = await new VpcHelper(this.#client).describe(vpc).then((vpc) => vpc.VpcId);
+        const result = await this.#client
             .describeSubnets({ Filters: [{ Name: "vpc-id", Values: [id] }] })
             .promise();
 
@@ -32,7 +41,7 @@ module.exports = class SubnetHelper {
     }
 
     async #setRouteTables(subnet) {
-        const result = await ec2
+        const result = await this.#client
             .describeRouteTables({
                 Filters: [
                     {

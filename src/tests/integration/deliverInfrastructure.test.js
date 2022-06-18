@@ -1,17 +1,16 @@
 'use strict'
 
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const DescribeInfra = require('../../DescribeInfra');
 const Credentials = require('../../Credentials');
 const fs = require('fs');
 const path = require('path');
 
 describe('deliver infrastructure - integration', () => {
-    /** @type {DescribeInfra} */
     let describeInfra;
-
-    /** @type {Credentials} */
     let credentials;
-
     let outputDir;
 
     beforeAll(() => {
@@ -21,8 +20,8 @@ describe('deliver infrastructure - integration', () => {
     beforeEach(() => {
         deleteOutputDir();
 
-        describeInfra = new DescribeInfra();
-        credentials = new Credentials(outputDir);
+        describeInfra = new DescribeInfra(ec2);
+        credentials = new Credentials(outputDir, ec2);
     });
 
     test('deliverInfrastructure_ExistingVpc_Success', async () => {

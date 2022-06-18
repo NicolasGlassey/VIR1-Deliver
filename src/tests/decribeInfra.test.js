@@ -1,15 +1,17 @@
 "use strict";
 
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const DescribeInfra = require("../DescribeInfra");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException");
 
 describe("DescribeInfra", () => {
-    /** @type {DescribeInfra} */
     let describeInfra;
     let vpcName;
 
     beforeEach(() => {
-        describeInfra = new DescribeInfra();
+        describeInfra = new DescribeInfra(ec2);
         vpcName = "";
     });
 

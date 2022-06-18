@@ -1,3 +1,6 @@
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const keyPairHelper = require("../keyPairHelper.js");
 
 describe("keyPair", () => {
@@ -5,8 +8,8 @@ describe("keyPair", () => {
     let givenKeyPairName;
 
     beforeEach(() => {
-        keyPair = new keyPairHelper();
-        givenKeyPairName = ""
+        keyPair = new keyPairHelper(ec2);
+        givenKeyPairName = "";
     });
 
     test("exists_ExistingName_Success", async () => {

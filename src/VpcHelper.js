@@ -1,12 +1,21 @@
 'use strict';
 
-const AWS = require('aws-sdk');
-const ec2 = new AWS.EC2({ region: 'eu-west-3' });
+const VpcNotFoundException = require("./exceptions/vpc/VpcNotFoundException.js");
 const { Logger } = require("vir1-core");
 
-const VpcNotFoundException = require('./exceptions/vpc/VpcNotFoundException.js');
-
 module.exports = class VpcHelper {
+    //region private fields
+
+    #client;
+
+    //endregion
+
+    // region constructor
+    constructor(client) {
+        this.#client = client;
+    }
+    // endregion
+
     //region public methods
 
     /**
@@ -21,7 +30,7 @@ module.exports = class VpcHelper {
             throw err;
         };
 
-        const result = await ec2
+        const result = await this.#client
             .describeVpcs({ Filters: [{ Name: "tag:Name", Values: [name] }] })
             .promise()
             .catch(handleError);
@@ -43,7 +52,7 @@ module.exports = class VpcHelper {
             throw err;
         };
 
-        const result = await ec2
+        const result = await this.#client
             .describeVpcs({ Filters: [{ Name: "tag:Name", Values: [name] }] })
             .promise()
             .catch(handleError);
@@ -67,10 +76,12 @@ module.exports = class VpcHelper {
         const handleError = (err) => {
             Logger.error(err.message);
             throw err;
-        }
+        };
 
-        const result = await ec2
-            .describeInternetGateways({ Filters: [{ Name: "attachment.vpc-id", Values: [vpcId] }] })
+        const result = await this.#client
+            .describeInternetGateways({
+                Filters: [{ Name: "attachment.vpc-id", Values: [vpcId] }],
+            })
             .promise()
             .catch(handleError);
 

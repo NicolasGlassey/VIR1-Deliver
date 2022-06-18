@@ -1,10 +1,14 @@
 "use strict";
 
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const VpcHelper = require("./VpcHelper");
 const SubnetHelper = require("./SubnetHelper");
 const SecurityGroupHelper = require("./SecurityGroupHelper");
 const InstanceHelper = require("./InstanceHelper");
 const KeypairHelper = require("./KeypairHelper");
+
 const { Logger } = require("vir1-core");
 
 module.exports = class DescribeInfra {
@@ -16,20 +20,18 @@ module.exports = class DescribeInfra {
      * @returns Promise<string>
      */
     async describe(name) {
-        const subnetHelper = new SubnetHelper();
+        const vpc = await new VpcHelper(ec2).describe(name);
 
-        const vpc = await new VpcHelper().describe(name);
-
-        const subnets = await subnetHelper.describe(name);
+        const subnets = await new SubnetHelper(ec2).describe(name);
         const subnetsMapped = subnets.map((this.#mapSubnet));
 
-        const securityGroups = await new SecurityGroupHelper().describe(vpc.Name);
+        const securityGroups = await new SecurityGroupHelper(ec2).describe(vpc.Name);
         const securityGroupsMapped = securityGroups.map(this.#mapSecurityGroup);
 
-        const keyPairs = await new KeypairHelper().describe();
+        const keyPairs = await new KeypairHelper(ec2).describe();
         const keyPairsMapped = keyPairs.map(this.#mapKeyPair);
 
-        const instances = await new InstanceHelper().describe(vpc.VpcId);
+        const instances = await new InstanceHelper(ec2).describe(vpc.VpcId);
         const instancesMapped = instances.map(this.#mapInstance);
 
         const infra = this.#lowerKeysFirstCharRecursive({

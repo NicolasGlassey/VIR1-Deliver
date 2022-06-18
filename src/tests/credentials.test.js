@@ -1,5 +1,8 @@
 'use strict';
 
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const fs = require("fs");
 const path = require("path");
 const Credentials = require("../Credentials");
@@ -15,7 +18,7 @@ describe('Credentials', () => {
     beforeEach(() => {
         deleteOutputDir();
 
-        credentials = new Credentials(outputDir);
+        credentials = new Credentials(outputDir, ec2);
     })
 
     test('describeLinuxSshKeys_All_Success', async () => {

@@ -9,11 +9,13 @@ module.exports = class Credentials {
     //region private fields
 
     #outputDir;
+    #client;
 
     //endregion
 
-    constructor(outputDir) {
+    constructor(outputDir, client) {
         this.#outputDir = outputDir;
+        this.#client = client;
     }
 
     //region public methods
@@ -23,7 +25,7 @@ module.exports = class Credentials {
      * @returns {Promise<void>} Write the credentials in separate files
      */
     async describeLinuxSshKeys() {
-        const keyPairs = await new KeyPairHelper().describe();
+        const keyPairs = await new KeyPairHelper(this.#client).describe();
         this.#createOutputDirIfNotExists();
         this.#writeKeyPairsInFiles(keyPairs);
     }
@@ -33,7 +35,7 @@ module.exports = class Credentials {
      * @returns {Promise<void>} Write the credentials in separate files
      */
     async describeWindowsPasswords() {
-        const passwords = await new WindowsPasswordHelper().describe();
+        const passwords = await new WindowsPasswordHelper(this.#client).describe();
         this.#createOutputDirIfNotExists();
         this.#writePasswordsInFiles(passwords);
     }

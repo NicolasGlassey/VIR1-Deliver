@@ -1,13 +1,14 @@
+const AWS = require("aws-sdk");
+const ec2 = new AWS.EC2({ region: "eu-west-3" });
+
 const SecurityGroupHelper = require("../SecurityGroupHelper.js");
 
 describe("SecurityGroupHelper", () => {
-    /** @type {SecurityGroupHelper} */
     let securityGroup;
-    /** @type {string} */
     let securityGroupName;
 
     beforeEach(() => {
-        securityGroup = new SecurityGroupHelper();
+        securityGroup = new SecurityGroupHelper(ec2);
         securityGroupName = "";
     });
 
@@ -53,8 +54,8 @@ describe("SecurityGroupHelper", () => {
         expect(actualSecurityGroup.Description).toBe(securityGroupDescription);
         expect(actualSecurityGroup.IpPermissions.length).toBeDefined();
         expect(actualSecurityGroup.IpPermissionsEgress.length).toBeDefined();
-        expect(actualSecurityGroup.InboundSecurityRules).toBeDefined()
-        expect(actualSecurityGroup.OutboundSecurityRules).toBeDefined()
+        expect(actualSecurityGroup.InboundSecurityRules).toBeDefined();
+        expect(actualSecurityGroup.OutboundSecurityRules).toBeDefined();
     });
 
     test("describe_WithOnlyVpcName_Success", async () => {
@@ -73,7 +74,7 @@ describe("SecurityGroupHelper", () => {
             expect(sg.InboundSecurityRules).toBeDefined();
             expect(sg.OutboundSecurityRules).toBeDefined();
         });
-    })
+    });
 
     test("describe_NonExistingSecurityGroupName_Success", async () => {
         // Given

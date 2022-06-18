@@ -1,11 +1,21 @@
 'use strict';
 
-const AWS = require('aws-sdk');
+const VpcHelper = require("./VpcHelper");
 const { Logger } = require("vir1-core");
-const VpcHelper = require('./VpcHelper');
-const ec2 = new AWS.EC2({ region: 'eu-west-3' });
 
 module.exports = class SecurityGroupHelper {
+    //region private fields
+
+    #client;
+
+    //endregion
+
+    // region constructor
+    constructor(client) {
+        this.#client = client;
+    }
+    // endregion
+
     //region public methods
 
     /**
@@ -19,9 +29,12 @@ module.exports = class SecurityGroupHelper {
             throw err;
         };
 
-        const result = await ec2.describeSecurityGroups({
-            Filters: [{ Name: 'group-name', Values: [securityGroupName] }]
-        }).promise().catch(handleError);
+        const result = await this.#client
+            .describeSecurityGroups({
+                Filters: [{ Name: "group-name", Values: [securityGroupName] }],
+            })
+            .promise()
+            .catch(handleError);
 
         return result.SecurityGroups.length > 0;
     }
@@ -33,9 +46,12 @@ module.exports = class SecurityGroupHelper {
      * @returns {Promise<AWS.EC2.SecurityGroupList>} The security groups of the vpc.
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeSecurityGroups-property
      */
-    async describe(vpcName, securityGroupName = '') {
+    async describe(vpcName, securityGroupName = "") {
         const securityGroups = securityGroupName
-            ? await this.#describeWithVpcAndSecurityGroup(vpcName, securityGroupName)
+            ? await this.#describeWithVpcAndSecurityGroup(
+                  vpcName,
+                  securityGroupName
+              )
             : await this.#describeWithVpc(vpcName);
 
         for (const securityGroup of securityGroups)
@@ -49,52 +65,76 @@ module.exports = class SecurityGroupHelper {
     //region private methods
 
     async #describeWithVpcAndSecurityGroup(vpcName, securityGroupName) {
-        const vpcId = await new VpcHelper().describe(vpcName).then(vpc => vpc.VpcId);
-        const result = await ec2.describeSecurityGroups({
-            Filters: [
-                { Name: 'vpc-id', Values: [vpcId] },
-                { Name: 'group-name', Values: [securityGroupName] },
-            ]
-        }).promise().catch(this.#handleError);
+        const vpcId = await new VpcHelper(this.#client)
+            .describe(vpcName)
+            .then((vpc) => vpc.VpcId);
+        const result = await this.#client
+            .describeSecurityGroups({
+                Filters: [
+                    { Name: "vpc-id", Values: [vpcId] },
+                    { Name: "group-name", Values: [securityGroupName] },
+                ],
+            })
+            .promise()
+            .catch(this.#handleError);
 
-        Logger.info(`Describe security group : ${securityGroupName}, from VPC : ${vpcName}`);
+        Logger.info(
+            `Describe security group : ${securityGroupName}, from VPC : ${vpcName}`
+        );
         return result.SecurityGroups;
     }
 
     async #describeWithVpc(vpcName) {
-        const vpcId = await new VpcHelper().describe(vpcName).then(vpc => vpc.VpcId);
-        const result = await ec2.describeSecurityGroups({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] })
-                                .promise()
-                                .catch(this.#handleError);
+        const vpcId = await new VpcHelper(this.#client)
+            .describe(vpcName)
+            .then((vpc) => vpc.VpcId);
+        const result = await this.#client
+            .describeSecurityGroups({
+                Filters: [{ Name: "vpc-id", Values: [vpcId] }],
+            })
+            .promise()
+            .catch(this.#handleError);
 
         Logger.info(`Describe security groups from VPC : ${vpcName}`);
         return result.SecurityGroups;
     }
 
     async #setSecurityGroupRules(securityGroup) {
-        const result = await ec2.describeSecurityGroupRules({
-            Filters: [{ Name: 'group-id', Values: [securityGroup.GroupId] }]
-        }).promise().catch(this.#handleError);
+        const result = await this.#client
+            .describeSecurityGroupRules({
+                Filters: [
+                    { Name: "group-id", Values: [securityGroup.GroupId] },
+                ],
+            })
+            .promise()
+            .catch(this.#handleError);
 
-        securityGroup.InboundSecurityRules = securityGroup.InboundSecurityRules ?? [];
-        securityGroup.OutboundSecurityRules = securityGroup.OutboundSecurityRules ?? [];
-        result.SecurityGroupRules.forEach(rule => {
-            let portRange = (rule.FromPort !== rule.ToPort) ? `${rule.FromPort} - ${rule.ToPort}` : rule.FromPort;
+        securityGroup.InboundSecurityRules =
+            securityGroup.InboundSecurityRules ?? [];
+        securityGroup.OutboundSecurityRules =
+            securityGroup.OutboundSecurityRules ?? [];
+        result.SecurityGroupRules.forEach((rule) => {
+            let portRange =
+                rule.FromPort !== rule.ToPort
+                    ? `${rule.FromPort} - ${rule.ToPort}`
+                    : rule.FromPort;
             const inboundSecurityRule = {
-                RuleName: rule.Tags.find(tag => tag?.Key === 'Name')?.Value,
+                RuleName: rule.Tags.find((tag) => tag?.Key === "Name")?.Value,
                 Type: rule.ToPort,
                 Protocole: rule.IpProtocol,
                 PortRange: portRange,
                 Source: rule.GroupId,
-                Description: rule.Description
+                Description: rule.Description,
             };
 
             rule.IsEgress
                 ? securityGroup.OutboundSecurityRules.push(inboundSecurityRule)
                 : securityGroup.InboundSecurityRules.push(inboundSecurityRule);
-        })
+        });
 
-        Logger.info(`Set security group rules to security group : ${securityGroup.GroupName}`);
+        Logger.info(
+            `Set security group rules to security group : ${securityGroup.GroupName}`
+        );
     }
 
     #handleError(error) {

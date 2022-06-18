@@ -1,10 +1,19 @@
 "use strict";
 
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
 const { Logger } = require("vir1-core");
 
 module.exports = class InstanceHelper {
+    //region private fields
+
+    #client;
+
+    //endregion
+
+    // region constructor
+    constructor(client) {
+        this.#client = client;
+    }
+
     //region public methods
 
     /**
@@ -19,7 +28,7 @@ module.exports = class InstanceHelper {
             throw err;
         };
 
-        const result = await ec2
+        const result = await this.#client
             .describeInstances({
                 Filters: [{ Name: "tag:Name", Values: [name] }],
             })
@@ -42,7 +51,7 @@ module.exports = class InstanceHelper {
             throw err;
         };
 
-        const result = await ec2
+        const result = await this.#client
             .describeInstances({
                 Filters: [{ Name: "vpc-id", Values: [vpcId] }],
             })
@@ -50,7 +59,9 @@ module.exports = class InstanceHelper {
             .catch(handleError);
 
         Logger.info(`Describe instance of vpc ${vpcId}`);
-        return result.Reservations.map((reservation) => reservation.Instances[0]);
+        return result.Reservations.map(
+            (reservation) => reservation.Instances[0]
+        );
     }
 
     /**
@@ -63,12 +74,17 @@ module.exports = class InstanceHelper {
             throw err;
         };
 
-        const result = await ec2.describeInstances({ Filters: [{ Name: "platform", Values: ['windows'] }] })
-                                .promise()
-                                .catch(handleError);
+        const result = await this.#client
+            .describeInstances({
+                Filters: [{ Name: "platform", Values: ["windows"] }],
+            })
+            .promise()
+            .catch(handleError);
 
         Logger.info(`Describe windows instances`);
-        return result.Reservations.map((reservation) => reservation.Instances[0]);
+        return result.Reservations.map(
+            (reservation) => reservation.Instances[0]
+        );
     }
 
     //endregion public methods
