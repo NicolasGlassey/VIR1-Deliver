@@ -22,7 +22,7 @@ module.exports = class DescribeInfra {
     async describe(vpcName) {
         const vpc = await new VpcHelper(ec2).describe(vpcName);
 
-        const subnets = await new SubnetHelper(ec2).describe(vpcName);
+        const subnets = await new SubnetHelper(ec2).describe(vpc.Name);
         const subnetsMapped = subnets.map((this.#mapSubnet));
 
         const securityGroups = await new SecurityGroupHelper(ec2).describe(vpc.Name);
@@ -31,7 +31,7 @@ module.exports = class DescribeInfra {
         const keyPairs = await new KeypairHelper(ec2).describe();
         const keyPairsMapped = keyPairs.map(this.#mapKeyPair);
 
-        const instances = await new InstanceHelper(ec2).describe(vpc.VpcId);
+        const instances = await new InstanceHelper(ec2).describe(vpc.Name);
         const instancesMapped = instances.map(this.#mapInstance);
 
         const infra = this.#lowerKeysFirstCharRecursive({
@@ -44,7 +44,7 @@ module.exports = class DescribeInfra {
             instances: instancesMapped,
         });
 
-        Logger.info(`Describe Infrastructure of VPC ${vpcName}`);
+        Logger.info(`Describe Infrastructure of VPC ${vpc.Name}`);
         return JSON.stringify(infra, null, 4);
     }
 

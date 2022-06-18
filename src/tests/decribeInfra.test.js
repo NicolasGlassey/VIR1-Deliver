@@ -9,6 +9,7 @@ const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException");
 describe("DescribeInfra", () => {
     let describeInfra;
     let vpcName;
+    jest.setTimeout(30000);
 
     beforeEach(() => {
         describeInfra = new DescribeInfra(ec2);
