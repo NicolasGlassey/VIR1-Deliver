@@ -1,13 +1,12 @@
-const KeyPairHelper = require("../KeyPairHelper.js");
-const KeyPairNotFoundException = require("../exceptions/key_pair/KeyPairNotFoundException.js");
+const keyPairHelper = require("../keyPairHelper.js");
 
-describe("KeyPair", () => {
-    let keypair;
+describe("keyPair", () => {
+    let keyPair;
     let givenKeyPairName;
 
     beforeEach(() => {
-        keypair = new KeyPairHelper();
-        givenKeyPairName = "";
+        keyPair = new keyPairHelper();
+        givenKeyPairName = ""
     });
 
     test("exists_ExistingName_Success", async () => {
@@ -16,7 +15,7 @@ describe("KeyPair", () => {
         const expectedResult = true;
 
         // When
-        const result = await keypair.exists(givenKeyPairName);
+        const result = await keyPair.exists(givenKeyPairName);
 
         // Then
         expect(result).toBe(expectedResult);
@@ -24,37 +23,28 @@ describe("KeyPair", () => {
 
     test("exists_NotExistingName_Success", async () => {
         // Given
-        givenKeyPairName = "keypair-name-which-does-not-exist";
+        givenKeyPairName = "keyPair-name-which-does-not-exist";
         const expectedResult = false;
 
         // When
-        const result = await keypair.exists(givenKeyPairName);
+        const result = await keyPair.exists(givenKeyPairName);
 
         // Then
         expect(result).toBe(expectedResult);
     });
 
-    test("describe_ExistingKeypair_Success", async () => {
+    test("describe_ExistingkeyPair_Success", async () => {
         // Given
-        givenKeyPairName = "test";
+        const expectedKeyPairName = "test";
+        const expectedKeyPairType = "rsa";
 
         // When
-        const result = await keypair.describe(givenKeyPairName);
+        const result = await keyPair.describe().then((result) => {
+            return result.filter((keyPair) => keyPair.KeyName === "test")[0];
+        });
 
         // Then
-        expect(result.KeyName).toEqual(givenKeyPairName);
-    });
-
-    test("describe_NonExistingKeypair_ThrowException", async () => {
-        // Given
-        givenKeyPairName = "keypair-name-which-does-not-exist";
-
-        // When
-        await expect(keypair.describe(givenKeyPairName)).rejects.toThrow(
-            KeyPairNotFoundException
-        );
-
-        // Then
-        // Exception is thrown
+        expect(result.KeyName).toEqual(expectedKeyPairName);
+        expect(result.KeyType).toEqual(expectedKeyPairType);
     });
 });

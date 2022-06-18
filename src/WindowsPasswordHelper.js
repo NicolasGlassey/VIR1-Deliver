@@ -8,6 +8,8 @@ const { Logger } = require("vir1-core");
 const InstanceHelper = require('./InstanceHelper');
 
 module.exports = class WindowsPasswordHelper {
+    //region public methods
+
     /**
      * @brief Fetch the Windows password of an instance by its name.
      * @param instanceName {string} The instance name.
@@ -28,11 +30,12 @@ module.exports = class WindowsPasswordHelper {
 
         if (!passwordDataResult.PasswordData) {
             Logger.error(`Unavailable password for instance ${instanceId}`);
-            throw new UnavailableInstancePasswordException(
-                `The password of instance ${instanceId} is not available.`);
+            throw new UnavailableInstancePasswordException(`The password of instance ${instanceId} is not available.`);
         }
 
         Logger.info(`Password for instance ${instanceId} fetched`);
         return passwordDataResult;
     }
+
+    //endregion
 };

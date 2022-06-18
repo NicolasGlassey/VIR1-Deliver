@@ -79,3 +79,4 @@ build/Release
 node_modules
 
 *-lock.json
+/ignore/

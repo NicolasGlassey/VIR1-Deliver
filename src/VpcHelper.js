@@ -33,7 +33,7 @@ module.exports = class VpcHelper {
     /**
      * @brief Fetches the VPC with the given name from the AWS EC2 SDK
      * @param name {string} name of a VPC
-     * @returns {Promise<EC2.Vpc>} VPC with the given name
+     * @returns {Promise<AWS.EC2.Vpc>} VPC with the given name
      * @exception VpcNotFoundException is thrown if the there is no instance with that name
      * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
      */
@@ -53,10 +53,33 @@ module.exports = class VpcHelper {
 
         let vpc = result.Vpcs[0];
         vpc.Name = vpc.Tags.find((tag) => tag.Key === "Name").Value;
+        vpc.Igw = await this.#getInternetGateway(vpc.VpcId);
 
         Logger.info(`Describe Vpc ${vpc.Name}`);
         return vpc;
     }
 
     //endregion public methods
+
+    //region private methods
+
+    async #getInternetGateway(vpcId) {
+        const handleError = (err) => {
+            Logger.error(err.message);
+            throw err;
+        }
+
+        const result = await ec2
+            .describeInternetGateways({ Filters: [{ Name: "attachment.vpc-id", Values: [vpcId] }] })
+            .promise()
+            .catch(handleError);
+
+        const igw = result.InternetGateways[0];
+        if (igw) igw.Name = igw.Tags.find((tag) => tag.Key === "Name").Value;
+
+        Logger.info(`Describe InternetGateway of Vpc ${vpcId}`);
+        return igw;
+    }
+
+    //endregion private methods
 };
