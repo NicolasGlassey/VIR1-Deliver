@@ -21,7 +21,7 @@ module.exports = class DescribeInfra {
         const vpc = await new VpcHelper().describe(name);
 
         const subnets = await subnetHelper.describe(name);
-        const subnetsMapped = await Promise.all(subnets.map(async (subnet) => await this.#mapSubnet(subnet, subnetHelper)));
+        const subnetsMapped = subnets.map((this.#mapSubnet));
 
         const securityGroups = await new SecurityGroupHelper().describe(vpc.Name);
         const securityGroupsMapped = securityGroups.map(this.#mapSecurityGroup);
@@ -50,12 +50,12 @@ module.exports = class DescribeInfra {
 
     //region private methods
 
-    async #mapSubnet(subnet, subnetHelper) {
+    #mapSubnet(subnet) {
         return {
-            subnetName: subnet.Tags.find((tag) => tag.Key === "Name").Value,
+            subnetName: subnet.Name,
             subnetCidr: subnet.CidrBlock,
             availabilityZone: subnet.AvailabilityZone,
-            routeTables: await subnetHelper.routeTables(subnet),
+            routeTables: subnet.RouteTables,
         };
     }
 

@@ -21,17 +21,17 @@ module.exports = class SubnetHelper {
             .describeSubnets({ Filters: [{ Name: "vpc-id", Values: [id] }] })
             .promise();
 
+        const subnets = result.Subnets;
+        for (let subnet of subnets) {
+            subnet.Name = subnet.Tags.find((tag) => tag.Key === "Name").Value;
+            await this.#setRouteTables(subnet);
+        }
+
         Logger.info(`Describe Subnets of VPC ${vpc}`);
-        return result.Subnets;
+        return subnets;
     }
 
-    /**
-     * @brief Fetches the route tables of a given subnet from the AWS EC2 SDK
-     * @param subnet {AWS.EC2.Subnet} The subnet
-     * @returns {Promise<AWS.EC2.RouteTableList>}
-     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeRouteTables-property
-     */
-    async routeTables(subnet) {
+    async #setRouteTables(subnet) {
         const result = await ec2
             .describeRouteTables({
                 Filters: [
@@ -43,8 +43,8 @@ module.exports = class SubnetHelper {
             })
             .promise();
 
+        subnet.RouteTables = result.RouteTables;
         Logger.info(`Describe RouteTables of Subnet ${subnet.SubnetId}`);
-        return result.RouteTables;
     }
 
     //endregion public methods
