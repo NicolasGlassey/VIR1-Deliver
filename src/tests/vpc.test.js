@@ -12,36 +12,12 @@ describe("Vpc", () => {
     let givenVpcName;
 
     beforeAll(async () => {
-        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+        client = await AwsCloudClientImpl.initialize("eu-west-3");
     });
 
     beforeEach(() => {
-        vpc = new VpcHelper(client);
+        vpc = new VpcHelper(client.connection);
         givenVpcName = "";
-    });
-
-    test("exists_ExistingVpc_Success", async () => {
-        // Given
-        givenVpcName = "vpc-deliver";
-        const expectedResult = true;
-
-        // When
-        const result = await vpc.exists(givenVpcName);
-
-        // Then
-        expect(result).toBe(expectedResult);
-    });
-
-    test("exists_NonExistingVpc_Success", async () => {
-        // Given
-        givenVpcName = "vpc-name-which-does-not-exist";
-        const expectedResult = false;
-
-        // When
-        const result = await vpc.exists(givenVpcName);
-
-        // Then
-        expect(result).toBe(expectedResult);
     });
 
     test("describe_ExistingVpc_Success", async () => {
@@ -49,9 +25,11 @@ describe("Vpc", () => {
         givenVpcName = "vpc-deliver";
 
         // When
+        const exist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
         const result = await vpc.describe(givenVpcName);
 
         // Then
+        expect(exist).toBe(true);
         expect(result.Name).toEqual(givenVpcName);
     });
 
@@ -60,11 +38,13 @@ describe("Vpc", () => {
         givenVpcName = "vpc-name-which-does-not-exist";
 
         // When
+        const exist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
         await expect(vpc.describe(givenVpcName)).rejects.toThrow(
             VpcNotFoundException
         );
 
         // Then
+        expect(exist).toBe(false);
         // Exception is thrown
     });
 });

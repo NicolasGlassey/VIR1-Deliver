@@ -9,29 +9,31 @@ describe("DescribeInfra", () => {
     let client;
 
     let describeInfra;
-    let vpcName;
+    let givenVpcName;
 
     beforeAll(async () => {
-        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+        client = await AwsCloudClientImpl.initialize("eu-west-3");
     });
 
     beforeEach(() => {
-        describeInfra = new DescribeInfra(client);
-        vpcName = "";
+        describeInfra = new DescribeInfra(client.connection);
+        givenVpcName = "";
     });
 
     test('describe_AllInfra_Success', async () => {
         // Given
-        vpcName = "vpc-paris";
+        givenVpcName = "vpc-paris";
         const expectedType = 'string';
 
         // When
-        const infra = await describeInfra.describe(vpcName);
+        const vpcExist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
+        const infra = await describeInfra.describe(givenVpcName);
         const infraJson = JSON.parse(infra);
 
         // Then
+        expect(vpcExist).toBe(true);
         expect(typeof infra).toBe(expectedType);
-        expect(infraJson.vpcName).toBe(vpcName);
+        expect(infraJson.vpcName).toBe(givenVpcName);
         expect(infraJson.vpcCidr).toBeDefined();
         expect(infraJson.igwName).toBeDefined();
         expect(infraJson.subnets.length).toBeGreaterThan(0);
@@ -42,12 +44,16 @@ describe("DescribeInfra", () => {
 
     test('describe_NotExistingVpc_Success', async () => {
         // Given
-        vpcName = "vpc-not-existing";
+        givenVpcName = "vpc-not-existing";
 
         // when
-        await expect(describeInfra.describe(vpcName)).rejects.toThrow(VpcNotFoundException);
+        const vpcExist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
+        await expect(describeInfra.describe(givenVpcName)).rejects.toThrow(
+            VpcNotFoundException
+        );
 
         // Then
+        expect(vpcExist).toBe(false);
         // Exception is thrown
     });
 });

@@ -19,30 +19,6 @@ describe("keyPair", () => {
         givenKeyPairName = "";
     });
 
-    test("exists_ExistingName_Success", async () => {
-        // Given
-        givenKeyPairName = "test";
-        const expectedResult = true;
-
-        // When
-        const result = await keyPair.exists(givenKeyPairName);
-
-        // Then
-        expect(result).toBe(expectedResult);
-    });
-
-    test("exists_NotExistingName_Success", async () => {
-        // Given
-        givenKeyPairName = "keyPair-name-which-does-not-exist";
-        const expectedResult = false;
-
-        // When
-        const result = await keyPair.exists(givenKeyPairName);
-
-        // Then
-        expect(result).toBe(expectedResult);
-    });
-
     test("describe_ExistingkeyPair_Success", async () => {
         // Given
         const expectedKeyPairName = "test";

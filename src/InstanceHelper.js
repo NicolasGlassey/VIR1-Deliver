@@ -21,29 +21,6 @@ module.exports = class InstanceHelper {
     //region public methods
 
     /**
-     * @brief Check if the given name exists from the AWS EC2 SDK
-     * @param name {string} name of an Instance
-     * @returns {Promise<boolean>} true if the Instance exists, false otherwise
-     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
-     */
-    async exists(name) {
-        const handleError = (err) => {
-            Logger.error(err.message);
-            throw err;
-        };
-
-        const result = await this.#client
-            .describeInstances({
-                Filters: [{ Name: "tag:Name", Values: [name] }],
-            })
-            .promise()
-            .catch(handleError);
-
-        Logger.info(`Describe instance ${name} to check if it exists`);
-        return result.Reservations.length !== 0;
-    }
-
-    /**
      * @brief Fetch an instance from a VPC id
      * @param vpcName {string} NAme of a VPC
      * @returns {Promise<AWS.EC2.InstanceList>} Instances of the given VPC

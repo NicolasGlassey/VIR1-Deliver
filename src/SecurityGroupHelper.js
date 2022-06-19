@@ -19,27 +19,6 @@ module.exports = class SecurityGroupHelper {
     //region public methods
 
     /**
-     * @brief Check if a security group exists.
-     * @param securityGroupName The name of the security group.
-     * @returns {Promise<boolean>} True if the security group exists, false otherwise.
-     */
-    async exists(securityGroupName) {
-        const handleError = (err) => {
-            Logger.error(err.message);
-            throw err;
-        };
-
-        const result = await this.#client
-            .describeSecurityGroups({
-                Filters: [{ Name: "group-name", Values: [securityGroupName] }],
-            })
-            .promise()
-            .catch(handleError);
-
-        return result.SecurityGroups.length > 0;
-    }
-
-    /**
      * @brief Fetch all security groups of a vpc from the AWS EC2 SDK.
      * @param {string} vpcName The VPC name of the vpc to fetch the security groups from.
      * @param {string} securityGroupName The name of the security group to filter by.

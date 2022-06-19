@@ -12,11 +12,11 @@ describe("Subnet", () => {
     let givenVpcName;
 
     beforeAll(async () => {
-        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+        client = await AwsCloudClientImpl.initialize("eu-west-3");
     });
 
     beforeEach(() => {
-        subnet = new SubnetHelper(client);
+        subnet = new SubnetHelper(client.connection);
         givenVpcName = "";
     });
 
@@ -26,9 +26,11 @@ describe("Subnet", () => {
         const expectedSubnetCount = 1;
 
         // When
+        const vpcExist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
         const subnets = await subnet.describe(givenVpcName);
 
         // Then
+        expect(vpcExist).toBe(true);
         expect(subnets.length).toEqual(expectedSubnetCount);
     });
 
@@ -37,11 +39,13 @@ describe("Subnet", () => {
         givenVpcName = "vpc-name-which-does-not-exist";
 
         // When
+        const vpcExist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
         await expect(subnet.describe(givenVpcName)).rejects.toThrow(
             VpcNotFoundException
         );
 
         // Then
+        expect(vpcExist).toBe(false);
         // Exception is thrown
     });
 });
