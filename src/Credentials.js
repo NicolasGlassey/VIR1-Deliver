@@ -13,10 +13,14 @@ module.exports = class Credentials {
 
     //endregion
 
+    // region constructor
+
     constructor(client, outputDir) {
         this.#client = client;
         this.#outputDir = outputDir;
     }
+
+    //endregion
 
     //region public methods
 

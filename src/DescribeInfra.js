@@ -1,8 +1,5 @@
 "use strict";
 
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
-
 const VpcHelper = require("./VpcHelper");
 const SubnetHelper = require("./SubnetHelper");
 const SecurityGroupHelper = require("./SecurityGroupHelper");
@@ -12,6 +9,20 @@ const KeypairHelper = require("./KeypairHelper");
 const { Logger } = require("vir1-core");
 
 module.exports = class DescribeInfra {
+    //region private fields
+
+    #client;
+
+    //endregion
+
+    // region constructor
+
+    constructor(client) {
+        this.#client = client;
+    }
+
+    //endregion
+
     //region public methods
 
     /**
@@ -20,18 +31,20 @@ module.exports = class DescribeInfra {
      * @returns Promise<string>
      */
     async describe(vpcName) {
-        const vpc = await new VpcHelper(ec2).describe(vpcName);
+        const vpc = await new VpcHelper(this.#client).describe(vpcName);
 
-        const subnets = await new SubnetHelper(ec2).describe(vpc.Name);
-        const subnetsMapped = subnets.map((this.#mapSubnet));
+        const subnets = await new SubnetHelper(this.#client).describe(vpc.Name);
+        const subnetsMapped = subnets.map(this.#mapSubnet);
 
-        const securityGroups = await new SecurityGroupHelper(ec2).describe(vpc.Name);
+        const securityGroups = await new SecurityGroupHelper(this.#client).describe(
+            vpc.Name
+        );
         const securityGroupsMapped = securityGroups.map(this.#mapSecurityGroup);
 
-        const keyPairs = await new KeypairHelper(ec2).describe();
+        const keyPairs = await new KeypairHelper(this.#client).describe();
         const keyPairsMapped = keyPairs.map(this.#mapKeyPair);
 
-        const instances = await new InstanceHelper(ec2).describe(vpc.Name);
+        const instances = await new InstanceHelper(this.#client).describe(vpc.Name);
         const instancesMapped = instances.map(this.#mapInstance);
 
         const infra = this.#lowerKeysFirstCharRecursive({
@@ -78,7 +91,7 @@ module.exports = class DescribeInfra {
 
     #mapInstance(instance) {
         return {
-            instanceName: instance.Tags.find(tag => tag.Key === "Name").Value,
+            instanceName: instance.Tags.find((tag) => tag.Key === "Name").Value,
             instancePublicIp: instance.PublicIpAddress || "",
             instancePrivateIp: instance.PrivateIpAddress,
             instanceType: instance.InstanceType,
@@ -86,7 +99,9 @@ module.exports = class DescribeInfra {
             amiId: instance.ImageId,
             terminationProtection: "",
             usageOperation: instance.UsageOperation,
-            SecurityGroupsName: instance.SecurityGroups.map(sg => sg.GroupName),
+            SecurityGroupsName: instance.SecurityGroups.map(
+                (sg) => sg.GroupName
+            ),
             keyName: instance.KeyName,
         };
     }
