@@ -7,49 +7,49 @@ Class diagram
 Authors
     Yannick Baudraz
     Armand Marechal
-Date : 2022-06-18
+Date : 2022-06-19
 end note
 
 package deliver {
     class Infra as "DescribeInfra" #aliceblue {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe(vpcName : String) : String
     }
 
     class Credentials #aliceblue {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection, outputDir : String)
         +describeLinuxSshKeys() : void
         +describeWindowsPasswords() : void
     }
 
     class VpcHelper {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe(vpcName : String) : object
     }
 
     class SubnetHelper {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe(vpcName : String) : object[]
     }
 
     class SecurityGroupHelper {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe(vpcName : String, securityGroupName = " " : String) : object[]
     }
 
     class InstanceHelper {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe(instanceName : String) : object[]
         +describeWindowsInstances() : object[]
     }
 
     class KeyPairHelper {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe() : object[]
     }
 
     class WindowsPasswordHelper {
-        +constructor(awsClient : AwsCloudClientImpl)
+        +constructor(awsClient : AwsCloudClientImpl.connection)
         +describe() : object[]
     }
 
@@ -63,13 +63,19 @@ package deliver {
 }
 
 package core {
-    interface ICloudClient {
-        +describe(vpcName : String) : String
+    interface ICloudClient{
+        +constructor(cloudRegion: string, logPath: string)
+        +readParam(path: string, target: object): object
+        +log(message: string, type: enum): void
+        +exists(type: enum, name: string): boolean
     }
 
     class AwsCloudClientImpl implements ICloudClient {
-        +constructor()
-        +describe(vpcName : String) : String
+        +connection: aws.ec2
+        {static} +resouceType: enum
+
+        {static} +initialize(cloudRegion: string, logPath: string, accountId: string): AwsCloudClientImpl
+        +regionExists(region: string): boolean
     }
 }
 

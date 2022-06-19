@@ -19,7 +19,7 @@ describe("keyPair", () => {
         givenKeyPairName = "";
     });
 
-    test("describe_ExistingkeyPair_Success", async () => {
+    test("describe_ExistingKeyPair_Success", async () => {
         // Given
         const expectedKeyPairName = "test";
         const expectedKeyPairType = "rsa";

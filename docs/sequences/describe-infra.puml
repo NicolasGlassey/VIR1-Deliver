@@ -3,38 +3,58 @@
 
 autonumber
 
-participant Client #aliceblue
+participant User #aliceblue
 participant DescribeInfra as Infra #aliceblue
+participant Credentials #aliceblue
 participant VpcHelper as Vpc
 participant SubnetHelper as Subnet
 participant SecurityGroupHelper as SecurityGroup
 participant KeyPairHelper as KeyPair
 participant InstanceHelper as Instance
+participant WindowsPasswordHelper as WindowsPassword
 
-note right Client
+note right User
 VIR1_deliver
 Describe infrastructure sequence
 Author : Yannick Baudraz
 Date : 2022-06-09
 end note
 
-Client -> Infra: describe(vpcName)
+User -> Infra: describe(vpcName)
 
 Infra -> Vpc : describe(VpcName)
-Vpc --> Infra : vpc information
+Vpc --> Infra : Vpc
 
 Infra -> Subnet : describe(vpcName)
-Subnet --> Infra : subnet information
+Subnet --> Infra : Subnets of given vpc
 
 Infra -> SecurityGroup : describe(vpcName)
-SecurityGroup --> Infra : security groups information
+SecurityGroup --> Infra : Security groups of given vpc
 
-Infra -> KeyPair : describe(keyName)
-KeyPair --> Infra : key pairs information
+Infra -> KeyPair : describe()
+KeyPair --> Infra : All key pairs
 
-Infra -> Instance : describe(instanceName)
-Instance --> Infra : instances information
+Infra -> Instance : describe(vpcName)
+Instance --> Infra : Instances of given vpc
 
-Infra --> Client : Json string containing all information\nabout the infrastructure
+Infra --> User : Json string containing all information\nabout the infrastructure
+
+
+User -> Credentials : describeLinuxSshKeys()
+
+Credentials -> KeyPair : describe()
+KeyPair --> Credentials : All key pairs
+loop Each key pair
+    Credentials -> Credentials : Write key pair in file\ninside outputDir
+end loop
+Credentials --> User
+
+User -> Credentials : describeWindowsPassword()
+Credentials -> WindowsPassword : describe()
+WindowsPassword --> Credentials : All windows password
+loop Each Windows password
+    Credentials -> Credentials : Write windows password in file\ninside outputDir
+end loop
+Credentials --> User
 
 @enduml
