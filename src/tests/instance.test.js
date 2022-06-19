@@ -1,14 +1,21 @@
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+"use strict";
+
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const InstanceHelper = require("../InstanceHelper.js");
 
 describe("Instance", () => {
+    let client;
+
     let instance;
     let givenInstanceName;
 
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+    });
+
     beforeEach(async () => {
-        instance = new InstanceHelper(ec2);
+        instance = new InstanceHelper(client);
         givenInstanceName = "";
     });
 

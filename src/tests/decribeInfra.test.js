@@ -1,17 +1,22 @@
 "use strict";
 
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const DescribeInfra = require("../DescribeInfra");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException");
 
 describe("DescribeInfra", () => {
+    let client;
+
     let describeInfra;
     let vpcName;
 
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+    });
+
     beforeEach(() => {
-        describeInfra = new DescribeInfra(ec2);
+        describeInfra = new DescribeInfra(client);
         vpcName = "";
     });
 

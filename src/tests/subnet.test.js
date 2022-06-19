@@ -1,15 +1,22 @@
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+"use strict";
+
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const SubnetHelper = require("../SubnetHelper.js");
 const VpcNotFoundException = require("../exceptions/vpc/VpcNotFoundException.js");
 
 describe("Subnet", () => {
+    let client;
+
     let subnet;
     let givenVpcName;
 
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+    });
+
     beforeEach(() => {
-        subnet = new SubnetHelper(ec2);
+        subnet = new SubnetHelper(client);
         givenVpcName = "";
     });
 

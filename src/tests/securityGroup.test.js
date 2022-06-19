@@ -1,14 +1,21 @@
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+"use strict";
+
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const SecurityGroupHelper = require("../SecurityGroupHelper.js");
 
 describe("SecurityGroupHelper", () => {
+    let client;
+
     let securityGroup;
     let securityGroupName;
 
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+    });
+
     beforeEach(() => {
-        securityGroup = new SecurityGroupHelper(ec2);
+        securityGroup = new SecurityGroupHelper(client);
         securityGroupName = "";
     });
 
