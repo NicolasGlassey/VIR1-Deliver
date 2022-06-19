@@ -19,27 +19,6 @@ module.exports = class VpcHelper {
     //region public methods
 
     /**
-     * @brief Check if the given name exists from the AWS EC2 SDK
-     * @param name {string} name of a VPC
-     * @returns {Promise<boolean>} true if the VPC exists, false otherwise
-     * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeVpcs-property
-     */
-    async exists(name) {
-        const handleError = (err) => {
-            Logger.error(err.message);
-            throw err;
-        };
-
-        const result = await this.#client
-            .describeVpcs({ Filters: [{ Name: "tag:Name", Values: [name] }] })
-            .promise()
-            .catch(handleError);
-
-        Logger.info(`Describe Vpc ${name} to check if it exists`);
-        return result.Vpcs.length !== 0;
-    }
-
-    /**
      * @brief Fetches the VPC with the given name from the AWS EC2 SDK
      * @param vpcName {string} name of a VPC
      * @returns {Promise<AWS.EC2.Vpc>} VPC with the given name

@@ -1,24 +1,26 @@
 'use strict';
 
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const fs = require("fs");
 const path = require("path");
 const Credentials = require("../Credentials");
 
 describe('Credentials', () => {
+    let client;
+
     let credentials;
     let outputDir;
 
-    beforeAll(() => {
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
         outputDir = path.join(__dirname, 'output')
     });
 
     beforeEach(() => {
         deleteOutputDir();
 
-        credentials = new Credentials(outputDir, ec2);
+        credentials = new Credentials(client, outputDir);
     })
 
     test('describeLinuxSshKeys_All_Success', async () => {

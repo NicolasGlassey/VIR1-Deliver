@@ -1,13 +1,20 @@
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+"use strict";
+
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const WindowsPasswordHelper = require("../WindowsPasswordHelper.js");
 
 describe("WindowsPassword", () => {
+    let client;
+
     let windowsPassword;
 
-    beforeEach(async () => {
-        windowsPassword = new WindowsPasswordHelper(ec2);
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+    });
+
+    beforeEach(() => {
+        windowsPassword = new WindowsPasswordHelper(client);
     });
 
     test("describe_All_Success", async () => {

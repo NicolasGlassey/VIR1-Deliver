@@ -1,39 +1,22 @@
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+"use strict";
+
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const keyPairHelper = require("../keyPairHelper.js");
 
 describe("keyPair", () => {
+    let client;
+
     let keyPair;
     let givenKeyPairName;
 
+    beforeAll(async () => {
+        client = (await AwsCloudClientImpl.initialize("eu-west-3")).connection;
+    });
+
     beforeEach(() => {
-        keyPair = new keyPairHelper(ec2);
+        keyPair = new keyPairHelper(client);
         givenKeyPairName = "";
-    });
-
-    test("exists_ExistingName_Success", async () => {
-        // Given
-        givenKeyPairName = "test";
-        const expectedResult = true;
-
-        // When
-        const result = await keyPair.exists(givenKeyPairName);
-
-        // Then
-        expect(result).toBe(expectedResult);
-    });
-
-    test("exists_NotExistingName_Success", async () => {
-        // Given
-        givenKeyPairName = "keyPair-name-which-does-not-exist";
-        const expectedResult = false;
-
-        // When
-        const result = await keyPair.exists(givenKeyPairName);
-
-        // Then
-        expect(result).toBe(expectedResult);
     });
 
     test("describe_ExistingkeyPair_Success", async () => {

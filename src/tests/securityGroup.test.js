@@ -1,48 +1,37 @@
-const AWS = require("aws-sdk");
-const ec2 = new AWS.EC2({ region: "eu-west-3" });
+"use strict";
+
+const { AwsCloudClientImpl } = require("vir1-core");
 
 const SecurityGroupHelper = require("../SecurityGroupHelper.js");
 
 describe("SecurityGroupHelper", () => {
+    let client;
+
     let securityGroup;
     let securityGroupName;
+    let givenVpcName;
+
+    beforeAll(async () => {
+        client = await AwsCloudClientImpl.initialize("eu-west-3");
+    });
 
     beforeEach(() => {
-        securityGroup = new SecurityGroupHelper(ec2);
+        securityGroup = new SecurityGroupHelper(client.connection);
         securityGroupName = "";
-    });
-
-    test("exists_ExistingInstance_Success", async () => {
-        // Given
-        securityGroupName = "default";
-
-        // When
-        const result = await securityGroup.exists(securityGroupName);
-
-        // Then
-        expect(result).toBeTruthy();
-    });
-
-    test("exists_NonExistingInstance_Success", async () => {
-        // Given
-        securityGroupName = "non-existing";
-
-        // When
-        const result = await securityGroup.exists(securityGroupName);
-
-        // Then
-        expect(result).toBeFalsy();
+        givenVpcName = "";
     });
 
     test("describe_ExistingSecurityGroupName_Success", async () => {
         // Given
         securityGroupName = "default";
         const securityGroupDescription = "default VPC security group";
-        const vpcName = "vpc-deliver";
+
+        givenVpcName = "vpc-deliver";
 
         // When
+        const vpcExist = await client.exists(AwsCloudClientImpl.VPC, givenVpcName);
         const securityGroups = await securityGroup.describe(
-            vpcName,
+            givenVpcName,
             securityGroupName
         );
 
@@ -50,6 +39,7 @@ describe("SecurityGroupHelper", () => {
         const actualSecurityGroup = securityGroups.find(
             (sg) => sg.GroupName === securityGroupName
         );
+        expect(vpcExist).toBe(true);
         expect(actualSecurityGroup.GroupName).toBe(securityGroupName);
         expect(actualSecurityGroup.Description).toBe(securityGroupDescription);
         expect(actualSecurityGroup.IpPermissions.length).toBeDefined();
@@ -60,12 +50,17 @@ describe("SecurityGroupHelper", () => {
 
     test("describe_WithOnlyVpcName_Success", async () => {
         // Given
-        const vpcName = "vpc-deliver";
+        givenVpcName = "vpc-deliver";
 
         // When
-        const securityGroups = await securityGroup.describe(vpcName);
+        const vpcExist = await client.exists(
+            AwsCloudClientImpl.VPC,
+            givenVpcName
+        );
+        const securityGroups = await securityGroup.describe(givenVpcName);
 
         // Then
+        expect(vpcExist).toBe(true);
         securityGroups.forEach((sg) => {
             expect(sg.GroupName).toBeDefined();
             expect(sg.Description).toBeDefined();
@@ -78,16 +73,21 @@ describe("SecurityGroupHelper", () => {
 
     test("describe_NonExistingSecurityGroupName_Success", async () => {
         // Given
+        givenVpcName = "vpc-deliver";
         securityGroupName = "non-existing";
-        const vpcName = "vpc-deliver";
 
         // When
+        const vpcExist = await client.exists(
+            AwsCloudClientImpl.VPC,
+            givenVpcName
+        );
         const securityGroups = await securityGroup.describe(
-            vpcName,
+            givenVpcName,
             securityGroupName
         );
 
         // Then
+        expect(vpcExist).toBe(true);
         expect(securityGroups).toEqual([]);
     });
 });

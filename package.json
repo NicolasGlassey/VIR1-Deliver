@@ -21,8 +21,6 @@
     "jest": "^28.1.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.1131.0",
-    "log4js": "^6.4.6",
-    "vir1-core": "^1.0.1"
+    "vir1-core": "^1.2.0"
   }
 }
